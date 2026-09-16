@@ -1,784 +1,1441 @@
-cat > /tmp/esxi_cpu_monitor.py <<'PY'
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-import csv
-import getpass
 import os
 import sys
 import time
-import urllib3
-import requests
+import json
+import csv
+import ssl
+import signal
+import socket
+import getpass
+import datetime
+import urllib.request
+import urllib.error
 import xml.etree.ElementTree as ET
-from datetime import datetime
 
-urllib3.disable_warnings(
-    urllib3.exceptions.InsecureRequestWarning
-)
+# ============================================================
+# 配置
+# ============================================================
+
+BASE_DIR = "/volume1/homes/willadmin/esxi-monitor"
+
+CSV_FILE = os.path.join(BASE_DIR, "esxi_cpu_monitor.csv")
+RUN_LOG = os.path.join(BASE_DIR, "esxi_cpu_monitor.log")
+STATE_FILE = os.path.join(BASE_DIR, "esxi_cpu_monitor_state.json")
+
+PID_FILE = "/tmp/esxi_cpu_monitor.pid"
+
+# 旧 V1 数据
+LEGACY_CSV_FILE = "/tmp/esxi_cpu_monitor.csv"
 
 ESXI_HOST = "192.168.5.100"
 ESXI_USER = "root"
-ESXI_URL = "https://%s/sdk" % ESXI_HOST
+ESXI_PORT = 443
+SOAP_URL = "https://{}:{}/sdk".format(ESXI_HOST, ESXI_PORT)
 
 INTERVAL = 60
 
-LOG_FILE = "/tmp/esxi_cpu_monitor.csv"
-RUN_LOG = "/tmp/esxi_cpu_monitor.log"
-PID_FILE = "/tmp/esxi_cpu_monitor.pid"
+# 动态基线
+BASELINE_HOURS = 24
+MAX_HISTORY = 1560
 
-NS = {
-    "vim": "urn:vim25",
-}
+# 异常判定
+HIGH_RATIO = 2.5
+MIN_BASELINE_MHZ = 100
+
+# 持续时间
+HIGH_SECONDS = 15 * 60
+CRITICAL_SECONDS = 60 * 60
+LONG_HIGH_SECONDS = 5 * 60 * 60
+
+# 恢复
+RECOVERY_RATIO = 1.5
+
+# VM 顺序
+VM_ORDER = [
+    "OpenWRT",
+    "Win11",
+    "Palworld",
+    "DSM7.2",
+]
 
 
-def soap_request(session, body):
+# ============================================================
+# 全局
+# ============================================================
 
+running = True
+password = None
+
+
+# ============================================================
+# 基础工具
+# ============================================================
+
+def now_string():
+    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
+def ensure_base_dir():
+    if not os.path.isdir(BASE_DIR):
+        os.makedirs(BASE_DIR)
+
+
+def log(message):
+    line = "[{}] {}".format(now_string(), message)
+
+    try:
+        print(line, flush=True)
+    except Exception:
+        pass
+
+    try:
+        with open(RUN_LOG, "a", encoding="utf-8") as f:
+            f.write(line + "\n")
+    except Exception:
+        pass
+
+
+def write_pid():
+    with open(PID_FILE, "w") as f:
+        f.write(str(os.getpid()))
+
+
+def remove_pid():
+    try:
+        if os.path.exists(PID_FILE):
+            with open(PID_FILE, "r") as f:
+                pid = f.read().strip()
+
+            if pid == str(os.getpid()):
+                os.remove(PID_FILE)
+    except Exception:
+        pass
+
+
+def process_cmdline(pid):
+    try:
+        with open("/proc/{}/cmdline".format(pid), "rb") as f:
+            data = f.read()
+        return data.replace(b"\x00", b" ").decode("utf-8", "ignore")
+    except Exception:
+        return ""
+
+
+def is_process_running(pid):
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
+
+
+def check_existing_process():
+    if not os.path.exists(PID_FILE):
+        return False
+
+    try:
+        with open(PID_FILE, "r") as f:
+            pid_text = f.read().strip()
+
+        if not pid_text:
+            os.remove(PID_FILE)
+            return False
+
+        pid = int(pid_text)
+
+        if not is_process_running(pid):
+            os.remove(PID_FILE)
+            return False
+
+        cmdline = process_cmdline(pid)
+
+        current_script = os.path.abspath(__file__)
+
+        # 只有确认是当前 V2 脚本才认为正在运行
+        if current_script in cmdline:
+            print("监控已经在运行 PID: {}".format(pid))
+            return True
+
+        # 旧 V1 / 其他进程占用了旧 PID 文件
+        print("发现旧 PID 文件，但对应进程不是当前 V2。")
+        print("PID: {}".format(pid))
+        print("CMD: {}".format(cmdline))
+        print("清理旧 PID 文件，继续启动 V2。")
+
+        os.remove(PID_FILE)
+
+    except Exception as e:
+        print("检查 PID 文件失败: {}".format(e))
+
+        try:
+            os.remove(PID_FILE)
+        except Exception:
+            pass
+
+    return False
+
+
+# ============================================================
+# XML / SOAP
+# ============================================================
+
+SOAP_ENV = "http://schemas.xmlsoap.org/soap/envelope/"
+VIM25 = "urn:vim25"
+
+
+def soap_request(session_cookie, body):
     envelope = """<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope
- xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
- xmlns:vim="urn:vim25">
- <soapenv:Body>
-%s
- </soapenv:Body>
-</soapenv:Envelope>
-""" % body
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:vim25="urn:vim25">
+    <soapenv:Body>
+        {}
+    </soapenv:Body>
+</soapenv:Envelope>""".format(body)
 
-    response = session.post(
-        ESXI_URL,
+    req = urllib.request.Request(
+        SOAP_URL,
         data=envelope.encode("utf-8"),
         headers={
             "Content-Type": "text/xml; charset=utf-8",
-            "SOAPAction": ""
+            "SOAPAction": "",
+            "Cookie": session_cookie,
         },
-        verify=False,
-        timeout=30
+        method="POST",
     )
 
-    if response.status_code != 200:
+    context = ssl._create_unverified_context()
 
-        print(
-            "SOAP HTTP错误:",
-            response.status_code
-        )
+    with urllib.request.urlopen(
+        req,
+        context=context,
+        timeout=30,
+    ) as response:
+        return response.read()
 
-        print(response.text[:2000])
 
+def get_tag(element):
+    if "}" in element.tag:
+        return element.tag.split("}", 1)[1]
+    return element.tag
+
+
+def find_first_text(root, tag_name):
+    for element in root.iter():
+        if get_tag(element) == tag_name:
+            if element.text:
+                return element.text.strip()
+    return None
+
+
+# ============================================================
+# ESXi 登录
+# ============================================================
+
+def esxi_login():
+    body = """
+<vim25:Login>
+    <vim25:_this type="SessionManager">ha-sessionmgr</vim25:_this>
+    <vim25:userName>{}</vim25:userName>
+    <vim25:password>{}</vim25:password>
+</vim25:Login>
+""".format(
+        escape_xml(ESXI_USER),
+        escape_xml(password),
+    )
+
+    try:
+        data = soap_request("", body)
+        root = ET.fromstring(data)
+
+        fault = None
+        for element in root.iter():
+            if get_tag(element) == "Fault":
+                fault = element
+                break
+
+        if fault is not None:
+            print("ESXi 登录失败")
+            return None
+
+        cookie = None
+
+        # urllib 的 Cookie 不能直接从 response 得到，因为这里使用
+        # urlopen 后已经关闭。重新通过 Login API 不方便获取 cookie。
+        #
+        # 因此这里采用 SessionManager 的 cookie 模式：
+        # vCenter/ESXi 通常返回 Set-Cookie vmware_soap_session。
+        #
+        # 为兼容 NAS Python 3.8，改用自定义 opener 重新登录。
+
+        return login_with_opener()
+
+    except Exception as e:
+        print("ESXi 登录失败: {}".format(e))
         return None
 
-    return ET.fromstring(
-        response.content
+
+class CookieCollector(urllib.request.HTTPRedirectHandler):
+    pass
+
+
+def login_with_opener():
+    import http.cookiejar
+
+    cj = http.cookiejar.CookieJar()
+
+    opener = urllib.request.build_opener(
+        urllib.request.HTTPCookieProcessor(cj)
+    )
+
+    body = """<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:vim25="urn:vim25">
+    <soapenv:Body>
+        <vim25:Login>
+            <vim25:_this type="SessionManager">ha-sessionmgr</vim25:_this>
+            <vim25:userName>{}</vim25:userName>
+            <vim25:password>{}</vim25:password>
+        </vim25:Login>
+    </soapenv:Body>
+</soapenv:Envelope>
+""".format(
+        escape_xml(ESXI_USER),
+        escape_xml(password),
+    )
+
+    req = urllib.request.Request(
+        SOAP_URL,
+        data=body.encode("utf-8"),
+        headers={
+            "Content-Type": "text/xml; charset=utf-8",
+            "SOAPAction": "",
+        },
+        method="POST",
+    )
+
+    context = ssl._create_unverified_context()
+
+    try:
+        response = opener.open(req, timeout=30, context=context)
+    except TypeError:
+        # Python 3.8 某些 urllib opener 不接受 context 参数
+        opener = urllib.request.build_opener(
+            urllib.request.HTTPCookieProcessor(cj),
+            urllib.request.HTTPSHandler(context=context),
+        )
+        response = opener.open(req, timeout=30)
+
+    data = response.read()
+
+    root = ET.fromstring(data)
+
+    for element in root.iter():
+        if get_tag(element) == "Fault":
+            return None
+
+    cookies = []
+
+    for cookie in cj:
+        cookies.append("{}={}".format(cookie.name, cookie.value))
+
+    if not cookies:
+        return None
+
+    return ESXiSession(opener, context, cookies)
+
+
+class ESXiSession:
+    def __init__(self, opener, context, cookies):
+        self.opener = opener
+        self.context = context
+        self.cookie_header = "; ".join(cookies)
+
+    def request(self, body):
+        envelope = """<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:vim25="urn:vim25">
+    <soapenv:Body>
+        {}
+    </soapenv:Body>
+</soapenv:Envelope>""".format(body)
+
+        req = urllib.request.Request(
+            SOAP_URL,
+            data=envelope.encode("utf-8"),
+            headers={
+                "Content-Type": "text/xml; charset=utf-8",
+                "SOAPAction": "",
+                "Cookie": self.cookie_header,
+            },
+            method="POST",
+        )
+
+        try:
+            response = self.opener.open(req, timeout=30)
+        except TypeError:
+            response = self.opener.open(req, timeout=30)
+
+        return response.read()
+
+
+def escape_xml(value):
+    return (
+        str(value)
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+        .replace("'", "&apos;")
     )
 
 
-def login():
+# ============================================================
+# ESXi VM 发现
+# ============================================================
 
-    password = getpass.getpass(
-        "ESXi root password: "
-    )
-
-    session = requests.Session()
-    session.verify = False
-
+def discover_vms(session):
     body = """
-  <vim:RetrieveServiceContent>
-   <vim:_this type="ServiceInstance">ServiceInstance</vim:_this>
-  </vim:RetrieveServiceContent>
+<vim25:RetrieveProperties>
+    <vim25:_this type="PropertyCollector">ha-property-collector</vim25:_this>
+    <vim25:specSet>
+        <vim25:propSet>
+            <vim25:type>VirtualMachine</vim25:type>
+            <vim25:pathSet>name</vim25:pathSet>
+        </vim25:propSet>
+        <vim25:objectSet>
+            <vim25:obj type="Folder">ha-folder-root</vim25:obj>
+            <vim25:selectSet xsi:type="vim25:TraversalSpec"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <vim25:name>visitFolders</vim25:name>
+                <vim25:type>Folder</vim25:type>
+                <vim25:path>childEntity</vim25:path>
+                <vim25:skip>false</vim25:skip>
+                <vim25:selectSet xsi:type="vim25:SelectionSpec">
+                    <vim25:name>visitFolders</vim25:name>
+                </vim25:selectSet>
+                <vim25:selectSet>
+                    <vim25:name>dcToVm</vim25:name>
+                </vim25:selectSet>
+            </vim25:selectSet>
+            <vim25:selectSet xsi:type="vim25:TraversalSpec"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <vim25:name>dcToVm</vim25:name>
+                <vim25:type>Datacenter</vim25:type>
+                <vim25:path>vmFolder</vim25:path>
+                <vim25:skip>false</vim25:skip>
+                <vim25:selectSet>
+                    <vim25:name>visitFolders</vim25:name>
+                </vim25:selectSet>
+            </vim25:selectSet>
+        </vim25:objectSet>
+    </vim25:specSet>
+</vim25:RetrieveProperties>
 """
 
-    root = soap_request(
-        session,
-        body
-    )
+    try:
+        data = session.request(body)
+        root = ET.fromstring(data)
 
-    if root is None:
-        raise RuntimeError(
-            "无法连接 ESXi"
-        )
+        vms = {}
 
-    session_manager = root.find(
-        ".//vim:sessionManager",
-        NS
-    )
+        current_obj = None
+        current_name = None
 
-    if session_manager is None:
-        raise RuntimeError(
-            "找不到 sessionManager"
-        )
+        for element in root.iter():
+            tag = get_tag(element)
 
-    session_manager_id = session_manager.text.strip()
+            if tag == "obj":
+                current_obj = element.text
+                current_name = None
 
-    print(
-        "sessionManager:",
-        session_manager_id
-    )
+                if element.attrib.get("type") != "VirtualMachine":
+                    current_obj = None
 
+            elif tag == "val" and current_obj:
+                if current_name is None:
+                    current_name = element.text
+
+            elif tag == "propSet" and current_obj:
+                pass
+
+        # 更可靠地逐个解析 ObjectContent
+        vms = {}
+
+        for obj_content in root.iter():
+            if get_tag(obj_content) != "ObjectContent":
+                continue
+
+            obj_id = None
+            vm_name = None
+
+            for child in obj_content:
+                tag = get_tag(child)
+
+                if tag == "obj":
+                    obj_id = child.text
+                    if child.attrib.get("type") != "VirtualMachine":
+                        obj_id = None
+
+                elif tag == "propSet":
+                    for prop in child.iter():
+                        if get_tag(prop) == "val":
+                            vm_name = prop.text
+                            break
+
+            if obj_id and vm_name:
+                vms[vm_name] = obj_id
+
+        # 如果上面没有解析出来，使用通用方法再次解析
+        if not vms:
+            current_obj = None
+
+            for element in root.iter():
+                tag = get_tag(element)
+
+                if tag == "obj":
+                    if element.attrib.get("type") == "VirtualMachine":
+                        current_obj = element.text
+                    else:
+                        current_obj = None
+
+                elif tag == "val" and current_obj:
+                    if element.text:
+                        vms[element.text] = current_obj
+                        current_obj = None
+
+        return vms
+
+    except Exception as e:
+        log("VM 发现失败: {}".format(e))
+        return {}
+
+
+# ============================================================
+# 获取 ESXi Host CPU 信息
+# ============================================================
+
+def get_host_cpu(session):
     body = """
-  <vim:Login>
-   <vim:_this type="SessionManager">%s</vim:_this>
-   <vim:userName>%s</vim:userName>
-   <vim:password>%s</vim:password>
-  </vim:Login>
-""" % (
-        session_manager_id,
-        ESXI_USER,
-        password
-    )
+<vim25:RetrieveProperties>
+    <vim25:_this type="PropertyCollector">ha-property-collector</vim25:_this>
+    <vim25:specSet>
+        <vim25:propSet>
+            <vim25:type>HostSystem</vim25:type>
+            <vim25:pathSet>summary.hardware.cpuMhz</vim25:pathSet>
+            <vim25:pathSet>summary.hardware.numCpuCores</vim25:pathSet>
+            <vim25:pathSet>summary.quickStats.overallCpuUsage</vim25:pathSet>
+        </vim25:propSet>
+        <vim25:objectSet>
+            <vim25:obj type="HostSystem">ha-host</vim25:obj>
+        </vim25:objectSet>
+    </vim25:specSet>
+</vim25:RetrieveProperties>
+"""
 
-    root = soap_request(
-        session,
-        body
-    )
+    try:
+        data = session.request(body)
+        root = ET.fromstring(data)
 
-    if root is None:
-        raise RuntimeError(
-            "ESXi 登录失败"
-        )
+        values = []
 
-    if not any(
-        c.name == "vmware_soap_session"
-        for c in session.cookies
-    ):
-        raise RuntimeError(
-            "没有取得 vmware_soap_session"
-        )
+        for element in root.iter():
+            if get_tag(element) == "val":
+                if element.text is not None:
+                    values.append(element.text.strip())
 
-    print("登录成功")
+        if len(values) < 3:
+            log("Host CPU 返回数据不足: {}".format(values))
+            return None
 
-    # 删除密码变量
-    password = None
+        cpu_mhz = None
+        cores = None
+        usage = None
 
-    return session
+        for value in values:
+            try:
+                number = float(value)
 
+                if cpu_mhz is None:
+                    cpu_mhz = number
+                elif cores is None:
+                    cores = number
+                elif usage is None:
+                    usage = number
 
-def retrieve_properties(
-    session,
-    obj_type,
-    obj_id,
-    properties
-):
+            except Exception:
+                continue
 
-    prop_set = ""
+        if cpu_mhz is None or cores is None or usage is None:
+            log("Host CPU 数值解析失败: {}".format(values))
+            return None
 
-    for prop in properties:
+        capacity = cpu_mhz * cores
 
-        prop_set += """
-   <vim:propSet>
-    <vim:type>%s</vim:type>
-    <vim:all>false</vim:all>
-    <vim:pathSet>%s</vim:pathSet>
-   </vim:propSet>
-""" % (
-            obj_type,
-            prop
-        )
+        return {
+            "cpu_mhz": usage,
+            "capacity_mhz": capacity,
+            "percent": (
+                usage / capacity * 100.0
+                if capacity > 0
+                else 0.0
+            ),
+        }
 
-    body = """
-  <vim:RetrieveProperties>
-   <vim:_this type="PropertyCollector">ha-property-collector</vim:_this>
-
-   <vim:specSet>
-%s
-    <vim:objectSet>
-     <vim:obj type="%s">%s</vim:obj>
-     <vim:skip>false</vim:skip>
-    </vim:objectSet>
-   </vim:specSet>
-
-  </vim:RetrieveProperties>
-""" % (
-        prop_set,
-        obj_type,
-        obj_id
-    )
-
-    return soap_request(
-        session,
-        body
-    )
+    except Exception as e:
+        log("获取 Host CPU 失败: {}".format(e))
+        return None
 
 
-def parse_properties(root):
+# ============================================================
+# 获取 VM CPU
+# ============================================================
 
+def get_vm_cpu(session, vms):
     result = {}
 
-    if root is None:
-        return result
+    for name, vm_id in vms.items():
 
-    for prop in root.findall(
-        ".//vim:propSet",
-        NS
-    ):
+        body = """
+<vim25:RetrieveProperties>
+    <vim25:_this type="PropertyCollector">ha-property-collector</vim25:_this>
+    <vim25:specSet>
+        <vim25:propSet>
+            <vim25:type>VirtualMachine</vim25:type>
+            <vim25:pathSet>name</vim25:pathSet>
+            <vim25:pathSet>summary.quickStats.overallCpuUsage</vim25:pathSet>
+            <vim25:pathSet>runtime.powerState</vim25:pathSet>
+        </vim25:propSet>
+        <vim25:objectSet>
+            <vim25:obj type="VirtualMachine">{}</vim25:obj>
+        </vim25:objectSet>
+    </vim25:specSet>
+</vim25:RetrieveProperties>
+""".format(escape_xml(vm_id))
 
-        name = prop.find(
-            "vim:name",
-            NS
-        )
+        try:
+            data = session.request(body)
+            root = ET.fromstring(data)
 
-        value = prop.find(
-            "vim:val",
-            NS
-        )
+            vals = []
 
-        if (
-            name is not None
-            and value is not None
-        ):
+            for element in root.iter():
+                if get_tag(element) == "val":
+                    if element.text is not None:
+                        vals.append(element.text.strip())
 
-            result[name.text] = value
+            cpu_usage = None
+            power_state = None
+
+            # val 顺序通常对应 name / CPU / powerState
+            for value in vals:
+                if value in (
+                    "poweredOn",
+                    "poweredOff",
+                    "suspended",
+                ):
+                    power_state = value
+
+            for value in vals:
+                try:
+                    number = float(value)
+                    if number >= 0:
+                        cpu_usage = number
+                        break
+                except Exception:
+                    continue
+
+            result[name] = {
+                "cpu_mhz": cpu_usage if cpu_usage is not None else 0.0,
+                "power_state": power_state or "unknown",
+            }
+
+        except Exception as e:
+            log("获取 VM {} CPU 失败: {}".format(name, e))
+            result[name] = {
+                "cpu_mhz": 0.0,
+                "power_state": "unknown",
+            }
 
     return result
 
 
-def discover_vms(session):
+# ============================================================
+# CSV
+# ============================================================
 
-    root = retrieve_properties(
-        session,
-        "Folder",
-        "ha-folder-vm",
-        ["childEntity"]
-    )
-
-    if root is None:
-        raise RuntimeError(
-            "无法读取 VM Folder"
-        )
-
-    vms = []
-
-    for mor in root.findall(
-        ".//vim:ManagedObjectReference",
-        NS
-    ):
-
-        if mor.attrib.get(
-            "type"
-        ) != "VirtualMachine":
-
-            continue
-
-        vm_id = mor.text.strip()
-
-        vms.append({
-            "id": vm_id,
-            "name": vm_id
-        })
-
-    for vm in vms:
-
-        root = retrieve_properties(
-            session,
-            "VirtualMachine",
-            vm["id"],
-            ["name"]
-        )
-
-        props = parse_properties(
-            root
-        )
-
-        value = props.get(
-            "name"
-        )
-
-        if value is not None:
-            vm["name"] = value.text
-
-    return vms
+CSV_HEADER = [
+    "timestamp",
+    "host_cpu_mhz",
+    "OpenWRT",
+    "Win11",
+    "Palworld",
+    "DSM7.2",
+]
 
 
-def get_vm_cpu(
-    session,
-    vm
-):
-
-    root = retrieve_properties(
-        session,
-        "VirtualMachine",
-        vm["id"],
-        [
-            "runtime.powerState",
-            "summary.quickStats.overallCpuUsage"
-        ]
-    )
-
-    props = parse_properties(
-        root
-    )
-
-    power = props.get(
-        "runtime.powerState"
-    )
-
-    if power is None:
-        return None
-
-    if power.text != "poweredOn":
-        return None
-
-    cpu = props.get(
-        "summary.quickStats.overallCpuUsage"
-    )
-
-    if cpu is None:
-        return 0
+def csv_exists_and_valid():
+    if not os.path.exists(CSV_FILE):
+        return False
 
     try:
-        return int(cpu.text)
-    except:
-        return 0
+        if os.path.getsize(CSV_FILE) < 20:
+            return False
+
+        with open(CSV_FILE, "r", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            header = next(reader)
+
+        return "timestamp" in header and "host_cpu_mhz" in header
+
+    except Exception:
+        return False
 
 
-def get_host_cpu(session):
+def append_csv(timestamp, host_mhz, vm_values):
+    file_exists = os.path.exists(CSV_FILE)
 
-    root = retrieve_properties(
-        session,
-        "HostSystem",
-        "ha-host",
-        [
-            "summary.runtime.powerState",
-            "summary.quickStats.overallCpuUsage"
-        ]
-    )
-
-    props = parse_properties(
-        root
-    )
-
-    power = props.get(
-        "summary.runtime.powerState"
-    )
-
-    if power is None:
-        return None
-
-    if power.text != "poweredOn":
-        return None
-
-    cpu = props.get(
-        "summary.quickStats.overallCpuUsage"
-    )
-
-    if cpu is None:
-        return None
-
-    try:
-        return int(cpu.text)
-    except:
-        return None
-
-
-def init_csv(vms):
-
-    if os.path.exists(
-        LOG_FILE
-    ):
-        return
-
-    fields = [
-        "timestamp",
-        "host_cpu_mhz"
-    ]
-
-    for vm in vms:
-        fields.append(
-            vm["name"]
-        )
-
-    with open(
-        LOG_FILE,
-        "w",
-        newline="",
-        encoding="utf-8"
-    ) as f:
-
+    with open(CSV_FILE, "a", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
-            fieldnames=fields
+            fieldnames=CSV_HEADER,
         )
 
-        writer.writeheader()
+        if not file_exists:
+            writer.writeheader()
+
+        row = {
+            "timestamp": timestamp,
+            "host_cpu_mhz": "{:.0f}".format(host_mhz),
+            "OpenWRT": "",
+            "Win11": "",
+            "Palworld": "",
+            "DSM7.2": "",
+        }
+
+        for name in VM_ORDER:
+            if name in vm_values:
+                value = vm_values[name]
+
+                if value is not None:
+                    row[name] = "{:.0f}".format(value)
+
+        writer.writerow(row)
 
 
-def monitor(session, vms):
+# ============================================================
+# 历史数据
+# ============================================================
 
-    with open(
-        PID_FILE,
-        "w"
-    ) as f:
+def parse_timestamp(value):
+    try:
+        return datetime.datetime.strptime(
+            value,
+            "%Y-%m-%d %H:%M:%S",
+        )
+    except Exception:
+        return None
 
-        f.write(
-            str(os.getpid())
+
+def load_csv_history(path, target):
+    history = []
+
+    if not os.path.exists(path):
+        return history
+
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+
+            for row in reader:
+                timestamp = parse_timestamp(
+                    row.get("timestamp", "")
+                )
+
+                if timestamp is None:
+                    continue
+
+                value = row.get(target, "")
+
+                if value is None or value == "":
+                    continue
+
+                try:
+                    value = float(value)
+                except Exception:
+                    continue
+
+                history.append({
+                    "timestamp": timestamp.timestamp(),
+                    "value": value,
+                })
+
+    except Exception as e:
+        log("读取历史 CSV 失败 {}: {}".format(path, e))
+
+    return history
+
+
+def load_all_history():
+    history = {
+        "Host": [],
+        "OpenWRT": [],
+        "Win11": [],
+        "Palworld": [],
+        "DSM7.2": [],
+    }
+
+    # --------------------------------------------------------
+    # 优先读取新的持久 CSV
+    # --------------------------------------------------------
+
+    if csv_exists_and_valid():
+        log("发现持久目录 V2 CSV: {}".format(CSV_FILE))
+
+        history["Host"] = load_csv_history(
+            CSV_FILE,
+            "host_cpu_mhz",
         )
 
-    init_csv(vms)
+        for name in VM_ORDER:
+            history[name] = load_csv_history(
+                CSV_FILE,
+                name,
+            )
 
-    print()
-    print(
-        "开始后台监控"
-    )
-    print(
-        "采样间隔:",
-        INTERVAL,
-        "秒"
-    )
-    print(
-        "PID:",
-        os.getpid()
-    )
-    print(
-        "CSV:",
-        LOG_FILE
-    )
-    print(
-        "日志:",
-        RUN_LOG
-    )
-    print()
+    else:
+        log("持久目录没有 V2 CSV")
 
-    while True:
+        # ----------------------------------------------------
+        # 自动导入旧 V1 CSV
+        # ----------------------------------------------------
+
+        if os.path.exists(LEGACY_CSV_FILE):
+            log("发现 /tmp 中的旧 V1 CSV: {}".format(
+                LEGACY_CSV_FILE
+            ))
+            log("正在读取旧 V1 CSV")
+
+            history["Host"] = load_csv_history(
+                LEGACY_CSV_FILE,
+                "host_cpu_mhz",
+            )
+
+            for name in VM_ORDER:
+                history[name] = load_csv_history(
+                    LEGACY_CSV_FILE,
+                    name,
+                )
+
+            log("旧 V1 CSV 历史数据导入完成")
+        else:
+            log("没有找到旧 V1 CSV")
+
+    # --------------------------------------------------------
+    # 只保留最近 24 小时
+    # --------------------------------------------------------
+
+    cutoff = time.time() - BASELINE_HOURS * 3600
+
+    for target in history:
+        history[target] = [
+            item
+            for item in history[target]
+            if item["timestamp"] >= cutoff
+        ]
+
+        history[target] = history[target][-MAX_HISTORY:]
+
+    return history
+
+
+# ============================================================
+# 状态文件
+# ============================================================
+
+def default_state():
+    return {
+        "Host": {
+            "status": "NORMAL",
+            "abnormal_since": None,
+        },
+        "OpenWRT": {
+            "status": "NORMAL",
+            "abnormal_since": None,
+        },
+        "Win11": {
+            "status": "NORMAL",
+            "abnormal_since": None,
+        },
+        "Palworld": {
+            "status": "NORMAL",
+            "abnormal_since": None,
+        },
+        "DSM7.2": {
+            "status": "NORMAL",
+            "abnormal_since": None,
+        },
+    }
+
+
+def load_state():
+    if not os.path.exists(STATE_FILE):
+        return default_state()
+
+    try:
+        with open(STATE_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        state = default_state()
+
+        for target in state:
+            if target in data:
+                if "status" in data[target]:
+                    state[target]["status"] = data[target]["status"]
+
+                if "abnormal_since" in data[target]:
+                    state[target]["abnormal_since"] = data[target][
+                        "abnormal_since"
+                    ]
+
+        return state
+
+    except Exception as e:
+        log("读取状态文件失败，重新初始化: {}".format(e))
+        return default_state()
+
+
+def save_state(state):
+    tmp_file = STATE_FILE + ".tmp"
+
+    try:
+        with open(tmp_file, "w", encoding="utf-8") as f:
+            json.dump(
+                state,
+                f,
+                ensure_ascii=False,
+                indent=2,
+            )
+
+        os.replace(tmp_file, STATE_FILE)
+
+    except Exception as e:
+        log("保存状态失败: {}".format(e))
+
+
+# ============================================================
+# 动态基线
+# ============================================================
+
+def calculate_baseline(history):
+    if not history:
+        return None
+
+    cutoff = time.time() - BASELINE_HOURS * 3600
+
+    values = [
+        item["value"]
+        for item in history
+        if item["timestamp"] >= cutoff
+    ]
+
+    if not values:
+        return None
+
+    # 排除极端高值：
+    # 用排序后中间 80% 的数据计算平均值
+    # 避免一次大尖峰抬高 baseline
+    values = sorted(values)
+
+    if len(values) >= 10:
+        low = int(len(values) * 0.10)
+        high = int(len(values) * 0.90)
+
+        trimmed = values[low:high]
+
+        if trimmed:
+            values = trimmed
+
+    baseline = sum(values) / float(len(values))
+
+    return baseline
+
+
+def calculate_status(
+    current,
+    baseline,
+    previous_status,
+    abnormal_since,
+):
+    if baseline is None:
+        return (
+            "OBSERVE",
+            abnormal_since,
+            0.0,
+        )
+
+    effective_baseline = max(
+        baseline,
+        MIN_BASELINE_MHZ,
+    )
+
+    ratio = current / effective_baseline
+
+    now = time.time()
+
+    # --------------------------------------------------------
+    # 正常 / 恢复
+    # --------------------------------------------------------
+
+    if ratio <= RECOVERY_RATIO:
+        return (
+            "NORMAL",
+            None,
+            ratio,
+        )
+
+    # --------------------------------------------------------
+    # 首次进入异常
+    # --------------------------------------------------------
+
+    if abnormal_since is None:
+        abnormal_since = now
+
+    duration = now - abnormal_since
+
+    # --------------------------------------------------------
+    # 持续时间升级
+    # --------------------------------------------------------
+
+    if duration >= LONG_HIGH_SECONDS:
+        status = "LONG_HIGH"
+
+    elif duration >= CRITICAL_SECONDS:
+        status = "CRITICAL"
+
+    elif duration >= HIGH_SECONDS:
+        status = "HIGH"
+
+    else:
+        status = "OBSERVE"
+
+    return (
+        status,
+        abnormal_since,
+        ratio,
+    )
+
+
+# ============================================================
+# 状态变化输出
+# ============================================================
+
+def print_status(
+    target,
+    current,
+    baseline,
+    ratio,
+    status,
+    previous_status,
+):
+    if baseline is None:
+        baseline_text = "N/A"
+    else:
+        baseline_text = "{:.1f}".format(baseline)
+
+    line = (
+        "{}: {:.0f} MHz "
+        "baseline={} "
+        "ratio={:.2f}x "
+        "status={}"
+    ).format(
+        target,
+        current,
+        baseline_text,
+        ratio,
+        status,
+    )
+
+    if status != previous_status:
+        line += " [状态变化: {} -> {}]".format(
+            previous_status,
+            status,
+        )
+
+    log(line)
+
+
+# ============================================================
+# 历史样本追加
+# ============================================================
+
+def add_history(history, target, value):
+    if value is None:
+        return
+
+    history[target].append({
+        "timestamp": time.time(),
+        "value": float(value),
+    })
+
+    cutoff = time.time() - BASELINE_HOURS * 3600
+
+    history[target] = [
+        item
+        for item in history[target]
+        if item["timestamp"] >= cutoff
+    ]
+
+    if len(history[target]) > MAX_HISTORY:
+        history[target] = history[target][-MAX_HISTORY:]
+
+
+# ============================================================
+# 信号
+# ============================================================
+
+def signal_handler(signum, frame):
+    global running
+
+    log("收到退出信号 {}, 准备停止监控".format(signum))
+    running = False
+
+
+# ============================================================
+# daemon
+# ============================================================
+
+def daemonize():
+    pid = os.fork()
+
+    if pid > 0:
+        print("监控已转入后台")
+        print("后台 PID: {}".format(pid))
+        return True
+
+    os.setsid()
+
+    # 将 stdin/stdout/stderr 重定向到日志
+    try:
+        stdin = open(os.devnull, "r")
+        stdout = open(RUN_LOG, "a", buffering=1)
+        stderr = stdout
+
+        os.dup2(stdin.fileno(), sys.stdin.fileno())
+        os.dup2(stdout.fileno(), sys.stdout.fileno())
+        os.dup2(stderr.fileno(), sys.stderr.fileno())
+
+    except Exception:
+        pass
+
+    return False
+
+
+# ============================================================
+# 主监控循环
+# ============================================================
+
+def monitor(session, vms, history, state):
+    global running
+
+    write_pid()
+
+    log("=" * 60)
+    log("ESXi CPU Monitor V2 后台监控启动")
+    log("ESXi: {}".format(ESXI_HOST))
+    log("采样间隔: {} 秒".format(INTERVAL))
+    log("动态基线: 最近 {} 小时".format(BASELINE_HOURS))
+    log("HIGH: {} 分钟".format(HIGH_SECONDS // 60))
+    log("CRITICAL: {} 分钟".format(CRITICAL_SECONDS // 60))
+    log("LONG_HIGH: {} 小时".format(LONG_HIGH_SECONDS // 3600))
+    log("=" * 60)
+
+    while running:
+
+        cycle_start = time.time()
 
         try:
+            host = get_host_cpu(session)
 
-            timestamp = datetime.now().strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-
-            host_cpu = get_host_cpu(
-                session
-            )
-
-            if host_cpu is None:
-
-                print(
-                    timestamp,
-                    "无法取得 Host CPU",
-                    flush=True
-                )
-
-                time.sleep(
-                    INTERVAL
-                )
-
+            if host is None:
+                log("Host CPU 获取失败，本轮跳过")
+                time.sleep(INTERVAL)
                 continue
+
+            vm_data = get_vm_cpu(session, vms)
+
+            timestamp = now_string()
 
             vm_values = {}
 
-            for vm in vms:
+            for name in VM_ORDER:
+                if name in vm_data:
+                    value = vm_data[name]["cpu_mhz"]
 
-                vm_values[
-                    vm["name"]
-                ] = get_vm_cpu(
-                    session,
-                    vm
-                )
+                    if (
+                        vm_data[name]["power_state"] == "poweredOn"
+                    ):
+                        vm_values[name] = value
+                    else:
+                        vm_values[name] = None
 
-            print(
-                "----------------------------------------------",
-                flush=True
+            append_csv(
+                timestamp,
+                host["cpu_mhz"],
+                vm_values,
             )
 
-            print(
-                "%s  Host CPU: %d MHz"
-                % (
-                    timestamp,
-                    host_cpu
-                ),
-                flush=True
-            )
+            # ------------------------------------------------
+            # 计算 Host
+            # ------------------------------------------------
 
-            running = []
-
-            for vm in vms:
-
-                value = vm_values.get(
-                    vm["name"]
-                )
-
-                if value is not None:
-
-                    running.append(
-                        (
-                            vm["name"],
-                            value
-                        )
-                    )
-
-            running.sort(
-                key=lambda x: x[1],
-                reverse=True
-            )
-
-            running_names = set()
-
-            for name, value in running:
-
-                running_names.add(
-                    name
-                )
-
-                print(
-                    "  %-15s %6d MHz"
-                    % (
-                        name,
-                        value
-                    ),
-                    flush=True
-                )
-
-            for vm in vms:
-
-                if vm["name"] not in running_names:
-
-                    print(
-                        "  %-15s OFF"
-                        % vm["name"],
-                        flush=True
-                    )
-
-            row = {
-                "timestamp": timestamp,
-                "host_cpu_mhz": host_cpu
+            targets = {
+                "Host": host["cpu_mhz"],
             }
 
-            for vm in vms:
+            for name in VM_ORDER:
+                if name in vm_values:
+                    if vm_values[name] is not None:
+                        targets[name] = vm_values[name]
 
-                value = vm_values.get(
-                    vm["name"]
+            # ------------------------------------------------
+            # 逐个目标判断
+            # ------------------------------------------------
+
+            for target, current in targets.items():
+
+                baseline = calculate_baseline(
+                    history[target]
                 )
 
-                row[
-                    vm["name"]
-                ] = (
-                    value
-                    if value is not None
-                    else ""
+                previous_status = state[target]["status"]
+                previous_abnormal_since = state[target][
+                    "abnormal_since"
+                ]
+
+                status, abnormal_since, ratio = calculate_status(
+                    current,
+                    baseline,
+                    previous_status,
+                    previous_abnormal_since,
                 )
 
-            fields = [
-                "timestamp",
-                "host_cpu_mhz"
-            ]
+                state[target]["status"] = status
+                state[target]["abnormal_since"] = abnormal_since
 
-            for vm in vms:
-
-                fields.append(
-                    vm["name"]
+                print_status(
+                    target,
+                    current,
+                    baseline,
+                    ratio,
+                    status,
+                    previous_status,
                 )
 
-            with open(
-                LOG_FILE,
-                "a",
-                newline="",
-                encoding="utf-8"
-            ) as f:
+                # ------------------------------------------------
+                # 只有 NORMAL 才进入动态基线
+                #
+                # OBSERVE/HIGH/CRITICAL/LONG_HIGH 不加入
+                # 防止异常高负载把 baseline 抬高
+                # ------------------------------------------------
 
-                writer = csv.DictWriter(
-                    f,
-                    fieldnames=fields
+                if status == "NORMAL":
+                    add_history(
+                        history,
+                        target,
+                        current,
+                    )
+
+            save_state(state)
+
+            # ------------------------------------------------
+            # 汇总
+            # ------------------------------------------------
+
+            log(
+                "Host CPU: {:.0f} MHz ({:.1f}% / {:.0f} MHz)".format(
+                    host["cpu_mhz"],
+                    host["percent"],
+                    host["capacity_mhz"],
                 )
+            )
 
-                writer.writerow(row)
+            elapsed = time.time() - cycle_start
+
+            sleep_seconds = max(
+                1,
+                INTERVAL - int(elapsed),
+            )
+
+            time.sleep(sleep_seconds)
+
+        except KeyboardInterrupt:
+            running = False
 
         except Exception as e:
+            log("监控循环异常: {}".format(e))
+            time.sleep(INTERVAL)
 
-            print(
-                datetime.now().strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                ),
-                "监控异常:",
-                repr(e),
-                flush=True
-            )
-
-        time.sleep(
-            INTERVAL
-        )
+    remove_pid()
+    log("ESXi CPU Monitor V2 已停止")
 
 
-def start():
+# ============================================================
+# 启动
+# ============================================================
 
-    print()
-    print(
-        "=============================================="
-    )
-    print(
-        "ESXi CPU 动态基线数据采集"
-    )
-    print(
-        "=============================================="
-    )
-    print(
-        "ESXi:",
-        ESXI_HOST
-    )
-    print(
-        "采样间隔:",
-        INTERVAL,
-        "秒"
-    )
-    print(
-        "CSV:",
-        LOG_FILE
-    )
-    print(
-        "=============================================="
-    )
-    print()
+def main():
+    global password
 
-    # 防止重复启动
-    if os.path.exists(PID_FILE):
+    ensure_base_dir()
 
-        try:
+    print("")
+    print("==============================================")
+    print("ESXi CPU Monitor V2")
+    print("动态基线 + 持续时间")
+    print("==============================================")
+    print("ESXi: {}".format(ESXI_HOST))
+    print("持久目录: {}".format(BASE_DIR))
+    print("CSV: {}".format(CSV_FILE))
+    print("日志: {}".format(RUN_LOG))
+    print("状态: {}".format(STATE_FILE))
+    print("")
 
-            with open(
-                PID_FILE
-            ) as f:
-
-                old_pid = int(
-                    f.read().strip()
-                )
-
-            os.kill(
-                old_pid,
-                0
-            )
-
-            print(
-                "监控已经在运行"
-            )
-
-            print(
-                "PID:",
-                old_pid
-            )
-
-            return
-
-        except:
-            pass
-
-    session = login()
-
-    print()
-    print(
-        "正在发现 VM..."
-    )
-
-    vms = discover_vms(
-        session
-    )
-
-    if not vms:
-        raise RuntimeError(
-            "没有发现 VM"
-        )
-
-    print()
-    print(
-        "发现 VM："
-    )
-
-    for vm in vms:
-
-        print(
-            "  %-15s ID=%s"
-            % (
-                vm["name"],
-                vm["id"]
-            )
-        )
-
-    # ======================================================
-    # 登录和 VM 发现全部完成以后，才进行 daemon 化
-    # ======================================================
-
-    pid = os.fork()
-
-    if pid > 0:
-
-        print()
-        print(
-            "登录及 VM 发现成功"
-        )
-        print(
-            "监控已转入后台"
-        )
-        print(
-            "后台 PID:",
-            pid
-        )
-        print()
-        print(
-            "现在可以关闭 SSH / FRP"
-        )
-
+    if check_existing_process():
         return
 
-    # 子进程脱离终端
-    os.setsid()
+    # --------------------------------------------------------
+    # 加载历史
+    # --------------------------------------------------------
 
-    # 第二次 fork，避免重新获得控制终端
-    pid = os.fork()
+    history = load_all_history()
 
-    if pid > 0:
-        os._exit(0)
+    print("")
+    print("历史 Host 样本: {}".format(
+        len(history["Host"])
+    ))
 
-    # stdin / stdout / stderr 全部重定向
-    devnull = open(
-        os.devnull,
-        "r"
+    for name in VM_ORDER:
+        print(
+            "历史 {:<10} 样本: {}".format(
+                name,
+                len(history[name]),
+            )
+        )
+
+    # --------------------------------------------------------
+    # 先展示当前基线
+    # --------------------------------------------------------
+
+    print("")
+    print("当前历史基线:")
+
+    for target in ["Host"] + VM_ORDER:
+        baseline = calculate_baseline(
+            history[target]
+        )
+
+        if baseline is None:
+            print(
+                "  {:<10} baseline=N/A".format(
+                    target
+                )
+            )
+        else:
+            print(
+                "  {:<10} baseline={:.1f} MHz".format(
+                    target,
+                    baseline,
+                )
+            )
+
+    print("")
+
+    # --------------------------------------------------------
+    # 密码
+    # --------------------------------------------------------
+
+    password = getpass.getpass("ESXi root password: ")
+
+    print("")
+    print("正在登录 ESXi...")
+
+    session = login_with_opener()
+
+    if session is None:
+        print("ESXi 登录失败，请检查密码或 ESXi HTTPS。")
+        return
+
+    print("ESXi 登录成功")
+
+    # --------------------------------------------------------
+    # VM 发现
+    # --------------------------------------------------------
+
+    print("正在发现 VM...")
+
+    vms = discover_vms(session)
+
+    if not vms:
+        print("VM 发现失败")
+        return
+
+    print("发现 VM:")
+
+    for name in VM_ORDER:
+        if name in vms:
+            print(
+                "  {:<20} ID={}".format(
+                    name,
+                    vms[name],
+                )
+            )
+
+    print("")
+    print("VM 发现成功")
+
+    # --------------------------------------------------------
+    # 加载状态
+    # --------------------------------------------------------
+
+    state = load_state()
+
+    # --------------------------------------------------------
+    # 注册信号
+    # --------------------------------------------------------
+
+    signal.signal(
+        signal.SIGTERM,
+        signal_handler,
     )
 
-    log = open(
-        RUN_LOG,
-        "a",
-        buffering=1
+    signal.signal(
+        signal.SIGINT,
+        signal_handler,
     )
 
-    os.dup2(
-        devnull.fileno(),
-        sys.stdin.fileno()
-    )
+    # --------------------------------------------------------
+    # 后台运行
+    # --------------------------------------------------------
 
-    os.dup2(
-        log.fileno(),
-        sys.stdout.fileno()
-    )
+    is_child = daemonize()
 
-    os.dup2(
-        log.fileno(),
-        sys.stderr.fileno()
-    )
-
-    devnull.close()
+    if not is_child:
+        # 父进程结束
+        return
 
     monitor(
         session,
-        vms
+        vms,
+        history,
+        state,
     )
 
 
 if __name__ == "__main__":
-
-    try:
-
-        start()
-
-    except KeyboardInterrupt:
-
-        print(
-            "已取消"
-        )
-
-    except Exception as e:
-
-        print(
-            "启动失败:",
-            repr(e)
-        )
-
-        sys.exit(1)
-
-PY
-
-chmod +x /tmp/esxi_cpu_monitor.py
-python3 /tmp/esxi_cpu_monitor.py
+    main()
