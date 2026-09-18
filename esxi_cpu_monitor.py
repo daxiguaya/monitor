@@ -1114,26 +1114,34 @@ def daemonize():
     pid = os.fork()
 
     if pid > 0:
+        # 父进程正常退出
         print("监控已转入后台")
         print("后台 PID: {}".format(pid))
-        return True
+        return False
 
+    # 子进程脱离当前终端
     os.setsid()
 
-    # 将 stdin/stdout/stderr 重定向到日志
+    # daemon 后：
+    # stdout 不再重定向到 RUN_LOG。
+    # log() 本身已经同时负责终端输出和写入 RUN_LOG，
+    # 如果 stdout 也指向 RUN_LOG，会造成每条日志重复一次。
     try:
         stdin = open(os.devnull, "r")
-        stdout = open(RUN_LOG, "a", buffering=1)
-        stderr = stdout
+        stdout = open(os.devnull, "w")
+        stderr = open(RUN_LOG, "a", buffering=1)
 
-        os.dup2(stdin.fileno(), sys.stdin.fileno())
-        os.dup2(stdout.fileno(), sys.stdout.fileno())
-        os.dup2(stderr.fileno(), sys.stderr.fileno())
+        os.dup2(stdin.fileno(), 0)
+        os.dup2(stdout.fileno(), 1)
+        os.dup2(stderr.fileno(), 2)
+
+        stdin.close()
+        stdout.close()
 
     except Exception:
         pass
 
-    return False
+    return True
 
 
 # ============================================================
