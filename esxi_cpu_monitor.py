@@ -42,8 +42,9 @@ BASELINE_HOURS = 24
 MAX_HISTORY = 1560
 
 # 异常判定
-HIGH_RATIO = 2.5
+HIGH_RATIO = 2.0
 MIN_BASELINE_MHZ = 100
+HOST_CRITICAL_PERCENT = 30.0
 
 # 持续时间
 HIGH_SECONDS = 15 * 60
@@ -971,11 +972,13 @@ def calculate_status(
     baseline,
     previous_status,
     abnormal_since,
+    target=None,
+    host_percent=None,
 ):
     if baseline is None:
         return (
             "OBSERVE",
-            abnormal_since,
+            None,
             0.0,
         )
 
@@ -990,6 +993,8 @@ def calculate_status(
 
     # --------------------------------------------------------
     # 正常 / 恢复
+    #
+    # <= 1.5x：正常
     # --------------------------------------------------------
 
     if ratio <= RECOVERY_RATIO:
@@ -1000,7 +1005,44 @@ def calculate_status(
         )
 
     # --------------------------------------------------------
-    # 首次进入异常
+    # 1.5x ~ 2.0x：
+    #
+    # 只是观察，不开始异常计时。
+    #
+    # 这是根据两天真实数据调整后的核心逻辑。
+    # --------------------------------------------------------
+
+    if ratio < HIGH_RATIO:
+        return (
+            "OBSERVE",
+            None,
+            ratio,
+        )
+
+    # --------------------------------------------------------
+    # Host 特殊规则
+    #
+    # Host >= 2.0x baseline，但是实际 CPU < 30%：
+    #
+    # 可以进入 HIGH，
+    # 但不允许升级到 CRITICAL / LONG_HIGH。
+    #
+    # 这样可以避免：
+    #
+    # Host 220 MHz -> 450 MHz
+    #
+    # 这种对于 N100 实际只有约 14% 的正常工作状态，
+    # 最终被判定成 CRITICAL。
+    # --------------------------------------------------------
+
+    host_low_load = (
+        target == "Host"
+        and host_percent is not None
+        and host_percent < HOST_CRITICAL_PERCENT
+    )
+
+    # --------------------------------------------------------
+    # 第一次进入真正异常区间
     # --------------------------------------------------------
 
     if abnormal_since is None:
@@ -1010,13 +1052,30 @@ def calculate_status(
 
     # --------------------------------------------------------
     # 持续时间升级
+    #
+    # 15 分钟：
+    #   HIGH
+    #
+    # 1 小时：
+    #   CRITICAL
+    #   但 Host 必须 >= 30%
+    #
+    # 5 小时：
+    #   LONG_HIGH
+    #   但 Host 必须 >= 30%
     # --------------------------------------------------------
 
     if duration >= LONG_HIGH_SECONDS:
-        status = "LONG_HIGH"
+        if host_low_load:
+            status = "HIGH"
+        else:
+            status = "LONG_HIGH"
 
     elif duration >= CRITICAL_SECONDS:
-        status = "CRITICAL"
+        if host_low_load:
+            status = "HIGH"
+        else:
+            status = "CRITICAL"
 
     elif duration >= HIGH_SECONDS:
         status = "HIGH"
@@ -1158,9 +1217,24 @@ def monitor(session, vms, history, state):
     log("ESXi: {}".format(ESXI_HOST))
     log("采样间隔: {} 秒".format(INTERVAL))
     log("动态基线: 最近 {} 小时".format(BASELINE_HOURS))
-    log("HIGH: {} 分钟".format(HIGH_SECONDS // 60))
-    log("CRITICAL: {} 分钟".format(CRITICAL_SECONDS // 60))
-    log("LONG_HIGH: {} 小时".format(LONG_HIGH_SECONDS // 3600))
+    log("OBSERVE: {:.1f}x ~ {:.1f}x".format(
+        RECOVERY_RATIO,
+        HIGH_RATIO,
+    ))
+    log("HIGH: {:.1f}x + {} 分钟".format(
+        HIGH_RATIO,
+        HIGH_SECONDS // 60,
+    ))
+    log("CRITICAL: {:.1f}x + {} 分钟 + Host >= {:.0f}%".format(
+        HIGH_RATIO,
+        CRITICAL_SECONDS // 60,
+        HOST_CRITICAL_PERCENT,
+    ))
+    log("LONG_HIGH: {:.1f}x + {} 小时 + Host >= {:.0f}%".format(
+        HIGH_RATIO,
+        LONG_HIGH_SECONDS // 3600,
+        HOST_CRITICAL_PERCENT,
+    ))
     log("=" * 60)
 
     while running:
@@ -1231,6 +1305,12 @@ def monitor(session, vms, history, state):
                     baseline,
                     previous_status,
                     previous_abnormal_since,
+                    target=target,
+                    host_percent=(
+                        host["percent"]
+                        if target == "Host"
+                        else None
+                    ),
                 )
 
                 state[target]["status"] = status
