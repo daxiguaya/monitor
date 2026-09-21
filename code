@@ -1,71 +1,5 @@
-root@ZWNAS:~# echo "===== SynologyApplicationService ====="
-===== SynologyApplicationService =====
-root@ZWNAS:~# ls -lah /volume1/@appstore/SynologyApplicationService/
-total 0
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService 148 Sep 18 16:18 .
-drwxr-xr-x 1 root                       root                       574 Sep 20 10:36 ..
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService 286 Jul 29 13:16 apparmor
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  18 Jul 29 13:16 daemon
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService 272 Sep 18 16:18 etc
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  28 Sep 18 16:18 hook
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  42 Jul 29 13:16 indexdb
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService 684 Jul 29 13:16 lib
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  26 Sep  8 01:15 logs
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  64 Jul 29 13:16 node_libs
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService 644 Jul 29 13:16 node_modules
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  44 Jul 29 13:16 share
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService 438 Jul 29 13:16 tools
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService 814 Jul 29 13:16 ui
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService 126 Jul 29 13:16 webapi
-root@ZWNAS:~#
-root@ZWNAS:~# echo
-
-root@ZWNAS:~# echo "===== tools ====="
-===== tools =====
-root@ZWNAS:~# ls -lah /volume1/@appstore/SynologyApplicationService/tools/
-total 1.2M
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  438 Jul 29 13:16 .
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  148 Sep 18 16:18 ..
--rwxr-xr-x 1 SynologyApplicationService SynologyApplicationService 1.8K Jul 29 13:16 convert_inline_image_email_to_multipart.py
--rwxr-xr-x 1 SynologyApplicationService SynologyApplicationService 7.2K Jul 29 13:16 domain_migrate.py
--rwxr-xr-x 1 SynologyApplicationService SynologyApplicationService 7.6K Jul 29 13:16 generate_domain_migration_mapping.py
--rwsr-xr-x 1 root                       root                       526K Jul 29 13:16 notification_send
--rwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  21K Jul 29 13:16 notification_utils
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  450 Jul 29 13:16 sdk_plugin
--rwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  198 Jul 29 13:16 synocrond_task.sh
--rwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  17K Jul 29 13:16 synoguest
--rwxr-x--- 1 root                       root                       510K Jul 29 13:16 synosaschatbot
--rwsr-xr-x 1 root                       root                        17K Jul 29 13:16 synosashookaction
--rwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  37K Jul 29 13:16 synoscimprofile
--rwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  29K Jul 29 13:16 synoudc
-root@ZWNAS:~#
-root@ZWNAS:~# echo
-
-root@ZWNAS:~# echo "===== lib ====="
-===== lib =====
-root@ZWNAS:~# ls -lah /volume1/@appstore/SynologyApplicationService/lib/
-total 3.4M
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  684 Jul 29 13:16 .
-drwxr-xr-x 1 SynologyApplicationService SynologyApplicationService  148 Sep 18 16:18 ..
-lrwxrwxrwx 1 SynologyApplicationService SynologyApplicationService   21 Jul 29 13:16 libsynoapirunner.so -> libsynoapirunner.so.7
--rw-r--r-- 1 SynologyApplicationService SynologyApplicationService 811K Jul 29 13:16 libsynoapirunner.so.7
-lrwxrwxrwx 1 SynologyApplicationService SynologyApplicationService   18 Jul 29 13:16 libsynomailer.so -> libsynomailer.so.7
--rw-r--r-- 1 SynologyApplicationService SynologyApplicationService 235K Jul 29 13:16 libsynomailer.so.7
-lrwxrwxrwx 1 SynologyApplicationService SynologyApplicationService   23 Jul 29 13:16 libsynopersonalapp.so -> libsynopersonalapp.so.7
--rw-r--r-- 1 SynologyApplicationService SynologyApplicationService  97K Jul 29 13:16 libsynopersonalapp.so.7
-lrwxrwxrwx 1 SynologyApplicationService SynologyApplicationService   32 Jul 29 13:16 libsynopersonalnotification.so -> libsynopersonalnotification.so.7
--rw-r--r-- 1 SynologyApplicationService SynologyApplicationService 473K Jul 29 13:16 libsynopersonalnotification.so.7
-lrwxrwxrwx 1 SynologyApplicationService SynologyApplicationService   26 Jul 29 13:16 libsynopersonalnotify.so -> libsynopersonalnotify.so.7
--rw-r--r-- 1 SynologyApplicationService SynologyApplicationService  94K Jul 29 13:16 libsynopersonalnotify.so.7
-lrwxrwxrwx 1 SynologyApplicationService SynologyApplicationService   24 Jul 29 13:16 libsynopersonalutil.so -> libsynopersonalutil.so.7
--rw-r--r-- 1 SynologyApplicationService SynologyApplicationService 166K Jul 29 13:16 libsynopersonalutil.so.7
-lrwxrwxrwx 1 SynologyApplicationService SynologyApplicationService   27 Jul 29 13:16 libsynosaspluginworker.so -> libsynosaspluginworker.so.7
--rw-r--r-- 1 SynologyApplicationService SynologyApplicationService  25K Jul 29 13:16 libsynosaspluginworker.so.7
--rw-r--r-- 1 SynologyApplicationService SynologyApplicationService 1.5M Jul 29 13:16 libsynoscim.so
-root@ZWNAS:~# echo "===== config files ====="
-===== config files =====
 root@ZWNAS:~# find /volume1/@appstore/SynologyApplicationService \
->     -maxdepth 4 -type f \
+>     -maxdepth 5 -type f \
 >     \( -name "*.conf" -o -name "*.json" -o -name "*.ini" -o -name "*.xml" -o -name "*.db" -o -name "*.sqlite*" \) \
 >     -print 2>/dev/null
 /volume1/@appstore/SynologyApplicationService/etc/conf/provider.conf
@@ -108,11 +42,6 @@ root@ZWNAS:~# find /volume1/@appstore/SynologyApplicationService \
 /volume1/@appstore/SynologyApplicationService/share/synoscim/schema.json
 /volume1/@appstore/SynologyApplicationService/ui/helptoc.conf
 /volume1/@appstore/SynologyApplicationService/ui/index.conf
-root@ZWNAS:~# which readelf
-root@ZWNAS:~# which objdump
-root@ZWNAS:~# which nm
-root@ZWNAS:~# echo "===== ApplicationService email references ====="
-===== ApplicationService email references =====
 root@ZWNAS:~# grep -RniE 'emailaccount|emailaccountinfo|access_token|refresh_token|sender_account|smtp|notification' \
 >     /volume1/@appstore/SynologyApplicationService \
 >     2>/dev/null | head -200
@@ -316,66 +245,4 @@ Binary file /volume1/@appstore/SynologyApplicationService/tools/notification_uti
 /volume1/@appstore/SynologyApplicationService/ui/texts/cht/strings:109:mail_notification_enable =       "啟用電子郵件通知"
 /volume1/@appstore/SynologyApplicationService/ui/texts/cht/strings:115:send_test_notification   =       "發送測試通知"
 /volume1/@appstore/SynologyApplicationService/ui/texts/cht/strings:116:test_notification_sent   =       "測試訊息已送出。"
-root@ZWNAS:~# sqlite3 -header -column /usr/syno/etc/preference/willadmin/emailaccount.db "
-> SELECT
->     uid,
->     email_type,
->     alias,
->     host,
->     port,
->     account,
->     CASE WHEN passwd != '' THEN 'SET' ELSE 'EMPTY' END AS passwd,
->     auth,
->     sender_account,
->     sender_name,
->     CASE WHEN access_token != '' THEN 'SET' ELSE 'EMPTY' END AS access_token,
->     CASE WHEN refresh_token != '' THEN 'SET' ELSE 'EMPTY' END AS refresh_token,
->     expires_in,
->     is_default,
->     tls,
->     state
-> FROM emailaccountinfo;
-> "
-uid   email_type  alias                      host  port  account                    passwd  auth  sender_account  sender_name                access_token  refresh_token  expires_in  is_default  tls   state
-----  ----------  -------------------------  ----  ----  -------------------------  ------  ----  --------------  -------------------------  ------------  -------------  ----------  ----------  ----  -----
-1026  outlook     sky1259450966@outlook.com              sky1259450966@outlook.com  EMPTY   true                  sky1259450966@outlook.com  SET           SET            1733817397  true        true  0
-root@ZWNAS:~# sqlite3 /usr/syno/etc/preference/willadmin/emailaccount.db "
-> PRAGMA table_info(emailaccountinfo);
-> PRAGMA index_list(emailaccountinfo);
-> "
-0|uid|INTEGER|1||1
-1|email_type|TEXT|1||0
-2|alias|TEXT|1||2
-3|host|TEXT|0|''|0
-4|port|TEXT|0|''|0
-5|account|TEXT|1||0
-6|passwd|TEXT|0|''|0
-7|auth|TEXT|0|'true'|0
-8|sender_account|TEXT|0|''|0
-9|sender_name|TEXT|0|''|0
-10|access_token|TEXT|0|''|0
-11|refresh_token|TEXT|0|''|0
-12|expires_in|TEXT|0|''|0
-13|is_default|boolean|0|false|0
-14|tls|TEXT|0|'true'|0
-15|state|INT|0|0|0
-0|sqlite_autoindex_emailaccountinfo_1|1|pk|0
-root@ZWNAS:~# sqlite3 /usr/syno/etc/preference/willadmin/emailaccount.db "
-> SELECT
->     uid,
->     email_type,
->     alias,
->     host,
->     port,
->     account,
->     auth,
->     sender_account,
->     sender_name,
->     expires_in,
->     is_default,
->     tls,
->     state
-> FROM emailaccountinfo;
-> "
-1026|outlook|sky1259450966@outlook.com|||sky1259450966@outlook.com|true||sky1259450966@outlook.com|1733817397|true|true|0
 root@ZWNAS:~#
