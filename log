@@ -1,0 +1,1738 @@
+root@ZWNAS:~# uptime
+ 11:28:31 up 13 days, 10:04,  1 user,  load average: 0.20, 0.15, 0.13 [IO: 0.10, 0.04, 0.01 CPU: 0.10, 0.09, 0.09]
+root@ZWNAS:~# last reboot | head
+-ash: last: command not found
+root@ZWNAS:~# ss -lntp | grep 44301
+-ash: ss: command not found
+root@ZWNAS:~# systemctl status nginx --no-pager
+● nginx.service - Nginx
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; static; vendor preset: disabled)
+  Drop-In: /usr/local/lib/systemd/system/nginx.service.d
+           └─synorelay-service-handler.conf
+   Active: active (running) since Wed 2026-09-09 01:26:53 CST; 1 weeks 6 days ago
+ Main PID: 17339 (nginx)
+   CGroup: /syno_dsm_internal.slice/nginx.service
+           ├─17339 nginx: master process /usr/bin/nginx -c /etc/nginx/nginx.conf.run -g pid /run/nginx.pid; daemon on; master_process on;
+           ├─26193 nginx: worker process
+           ├─26194 nginx: worker process
+           ├─26195 nginx: worker process
+           └─26196 nginx: worker process
+
+Warning: Journal has been rotated since unit was started. Log output is incomplete or unavailable.
+root@ZWNAS:~# journalctl --since "2 hours ago" | grep -Ei "nginx|session|login|synoscgi|webman|restart|stop|start"
+Sep 22 11:00:58 ZWNAS synocgid[17439]: session/session.cpp:409 IP is not the same. 111.203.111.6, 111.202.166.30, , webui, 0
+Sep 22 11:00:59 ZWNAS synoscgi_SYNO.API.Auth_7_resume[9246]: plugin_action.c:76 synoplugin: [PRE][weblogin][webresume][MAIN] Plugin Action Start
+Sep 22 11:00:59 ZWNAS synoplugind[9248]: plugin_init.cpp:48 Plugin Init [9246][PRE][weblogin][webresume]
+Sep 22 11:00:59 ZWNAS synoplugind[9248]: plugin_action.cpp:355 [9246][PRE][webresume][MAIN] Scripts=[synocgi-plugin-weblogin]; Args=[USER=willadmin,TYPE=,IS_KNOWN_DEVICE=yes]
+Sep 22 11:00:59 ZWNAS synoplugind[9251]: plugin_action.cpp:355 [9246][PRE][webresume][synocgi-plugin-weblogin] ExitCode: 0
+Sep 22 11:00:59 ZWNAS synoplugind[9251]: plugin_action.cpp:355 [9246][PRE][webresume][synocgi-plugin-weblogin] Runtime: 0.013s
+Sep 22 11:00:59 ZWNAS synoscgi_SYNO.API.Auth_7_resume[9246]: plugin_action.c:76 synoplugin: [PRE][weblogin][webresume][MAIN] Runtime: 0.026s
+Sep 22 11:19:58 ZWNAS synoscgi_SYNO.API.Auth_7_login[32027]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogin][MAIN] Plugin Action Start
+Sep 22 11:19:58 ZWNAS synoplugind[32031]: plugin_init.cpp:48 Plugin Init [32027][PRE][weblogin][weblogin]
+Sep 22 11:19:59 ZWNAS synoplugind[32031]: plugin_action.cpp:355 [32027][PRE][weblogin][MAIN] Scripts=[secure_login_logger,secure_signin_weblogin_move_directory.sh,synocgi-plugin-weblogin,user-preference-check-permission.sh,user-revoke-password-pending.sh]; Args=[USER=willadmin,TYPE=passwd,IS_KNOWN_DEVICE=yes]
+Sep 22 11:19:59 ZWNAS synoplugind[32046]: plugin_action.cpp:355 [32027][PRE][weblogin][user-revoke-password-pending.sh] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32046]: plugin_action.cpp:355 [32027][PRE][weblogin][user-revoke-password-pending.sh] Runtime: 0.002s
+Sep 22 11:19:59 ZWNAS synoplugind[32045]: plugin_action.cpp:355 [32027][PRE][weblogin][user-preference-check-permission.sh] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32045]: plugin_action.cpp:355 [32027][PRE][weblogin][user-preference-check-permission.sh] Runtime: 0.006s
+Sep 22 11:19:59 ZWNAS synoplugind[32044]: plugin_action.cpp:355 [32027][PRE][weblogin][synocgi-plugin-weblogin] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32044]: plugin_action.cpp:355 [32027][PRE][weblogin][synocgi-plugin-weblogin] Runtime: 0.015s
+Sep 22 11:19:59 ZWNAS synoplugind[32042]: plugin_action.cpp:355 [32027][PRE][weblogin][secure_login_logger] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32042]: plugin_action.cpp:355 [32027][PRE][weblogin][secure_login_logger] Runtime: 0.020s
+Sep 22 11:19:59 ZWNAS synoplugind[32043]: plugin_action.cpp:355 [32027][PRE][weblogin][secure_signin_weblogin_move_directory.sh] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32043]: plugin_action.cpp:355 [32027][PRE][weblogin][secure_signin_weblogin_move_directory.sh] Runtime: 0.029s
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.API.Auth_7_login[32027]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogin][MAIN] Runtime: 0.066s
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.API.Auth_7_login[32027]: pam_syno_ipblocklist(webui:auth): DB Error: Failed to connect database: FATAL:  database "autoupdate" does not exist
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.API.Auth_7_login[32027]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogin][MAIN] Plugin Action Start
+Sep 22 11:19:59 ZWNAS synoplugind[32057]: plugin_init.cpp:48 Plugin Init [32027][POST][weblogin][weblogin]
+Sep 22 11:19:59 ZWNAS synoplugind[32057]: plugin_action.cpp:355 [32027][POST][weblogin][MAIN] Scripts=[secure_login_logger,secure_signin_weblogin_move_directory.sh,synocgi-plugin-weblogin,user-preference-check-permission.sh,user-revoke-password-pending.sh]; Args=[USER=willadmin,TYPE=passwd,SESSION=webui,API_VERSION=7,IS_KNOWN_DEVICE=yes,IP=111.202.166.30,AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0,STATUS=success,RESULT=1,DOMAIN=zwnas.notedream.com,PORT=5000,IS_HTTPS=no]
+Sep 22 11:19:59 ZWNAS synoplugind[32069]: plugin_action.cpp:355 [32027][POST][weblogin][secure_signin_weblogin_move_directory.sh] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32069]: plugin_action.cpp:355 [32027][POST][weblogin][secure_signin_weblogin_move_directory.sh] Runtime: 0.002s
+Sep 22 11:19:59 ZWNAS synoplugind[32071]: plugin_action.cpp:355 [32027][POST][weblogin][user-preference-check-permission.sh] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32071]: plugin_action.cpp:355 [32027][POST][weblogin][user-preference-check-permission.sh] Runtime: 0.002s
+Sep 22 11:19:59 ZWNAS synoplugind[32072]: plugin_action.cpp:355 [32027][POST][weblogin][user-revoke-password-pending.sh] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32072]: plugin_action.cpp:355 [32027][POST][weblogin][user-revoke-password-pending.sh] Runtime: 0.010s
+Sep 22 11:19:59 ZWNAS synoplugind[32070]: plugin_action.cpp:355 [32027][POST][weblogin][synocgi-plugin-weblogin] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32070]: plugin_action.cpp:355 [32027][POST][weblogin][synocgi-plugin-weblogin] Runtime: 0.014s
+Sep 22 11:19:59 ZWNAS synoplugind[32068]: plugin_action.cpp:355 [32027][POST][weblogin][secure_login_logger] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32068]: plugin_action.cpp:355 [32027][POST][weblogin][secure_login_logger] Runtime: 0.021s
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.API.Auth_7_login[32027]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogin][MAIN] Runtime: 0.060s
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.Core.Desktop.Initdata_1_get_user_service[32023]: [HA-ERROR] conf.cc:117: Failed to get key host0: [0x0900 file_get_key_value.c:28]
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.Core.Desktop.Initdata_1_get_user_service[32023]: [HA-ERROR] conf.cc:1516: Failed to get conf host0
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.Core.QuickStart.Info_3_load_ds_info[32092]: APIInternalUtil.cpp:221 WebAPI SYNO.Core.DataCollect is not valid
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.Core.QuickStart.Info_3_load_ds_info[32092]: APIInternalUtil.cpp:221 WebAPI SYNO.Core.DataCollect is not valid
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.Core.QuickStart.Info_3_load_ds_info_SYNO.Core.DataCollect_1_get[32096]: APIInternalUtil.cpp:221 WebAPI SYNO.Core.DataCollect is not valid
+Sep 22 11:20:05 ZWNAS synoscgi_SYNO.Core.Upgrade.Server_1_check[32094]: plugin_action.c:76 synoplugin: [POST][update][update/check_result_refreshed][MAIN] Plugin Action Start
+Sep 22 11:20:05 ZWNAS synoscgi_SYNO.Core.Upgrade.Server_1_check[32094]: plugin_action.c:76 synoplugin: [POST][update][update/check_result_refreshed][MAIN] Runtime: 0.041s
+Sep 22 11:20:12 ZWNAS synoscgi_SYNO.Core.Package.Server_1_check[32094]: SYNOPKGMGR: Failed to do json parsing, errmsg=[* Line 1, Column 1
+Sep 22 11:20:12 ZWNAS synoscgi_SYNO.Core.Package.Server_1_check[32094]: SYNOPKGMGR: http://spk.bobohome.store:8880?package_update_channel=beta&unique=synology_epyc7002_sa6400&build=86009&major=7&language=enu&micro=2&arch=epyc7002&minor=3&timezone=Beijing&group_id=3&nano=1, Failed to request packages, httpResponseCode=400
+Sep 22 11:20:12 ZWNAS synoscgi_SYNO.Core.Package.Server_1_check[32094]: SYNOPKGMGR: http://spk.bobohome.store:8880, Failed to request packages, httpResponseCode=400
+Sep 22 11:21:00 ZWNAS synoscgi_SYNO.Core.Package.Server_2_list[1401]: SYNOPKGMGR: Failed to do json parsing, errmsg=[* Line 1, Column 1
+Sep 22 11:21:00 ZWNAS synoscgi_SYNO.Core.Package.Server_2_list[1401]: SYNOPKGMGR: http://spk.bobohome.store:8880?package_update_channel=beta&unique=synology_epyc7002_sa6400&build=86009&major=7&language=chs&micro=2&arch=epyc7002&minor=3&timezone=Beijing&group_id=3&nano=1, Failed to request packages, httpResponseCode=400
+Sep 22 11:21:00 ZWNAS synoscgi_SYNO.Core.Package.Server_2_list[1401]: SYNOPKGMGR: http://spk.bobohome.store:8880, Failed to request packages, httpResponseCode=400
+Sep 22 11:22:18 ZWNAS synocgid[17439]: session/session.cpp:409 IP is not the same. 111.202.166.30, 111.202.166.250, SYNO.Core.UserSettings, webui, 0
+Sep 22 11:22:19 ZWNAS synoscgi_SYNO.API.Auth_7_logout[4856]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogout][MAIN] Plugin Action Start
+Sep 22 11:22:19 ZWNAS synoplugind[4881]: plugin_init.cpp:48 Plugin Init [4856][PRE][weblogin][weblogout]
+Sep 22 11:22:19 ZWNAS synoscgi_SYNO.API.Auth_7_logout[4856]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogout][MAIN] Runtime: 0.001s
+Sep 22 11:22:19 ZWNAS synoscgi_SYNO.API.Auth_7_logout[4856]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogout][MAIN] Plugin Action Start
+Sep 22 11:22:19 ZWNAS synoplugind[4884]: plugin_init.cpp:48 Plugin Init [4856][POST][weblogin][weblogout]
+Sep 22 11:22:19 ZWNAS synoscgi_SYNO.API.Auth_7_logout[4856]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogout][MAIN] Runtime: 0.001s
+Sep 22 11:22:24 ZWNAS synoscgi_SYNO.API.Auth_7_login[4953]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogin][MAIN] Plugin Action Start
+Sep 22 11:22:24 ZWNAS synoplugind[4958]: plugin_init.cpp:48 Plugin Init [4953][PRE][weblogin][weblogin]
+Sep 22 11:22:24 ZWNAS synoplugind[4958]: plugin_action.cpp:355 [4953][PRE][weblogin][MAIN] Scripts=[secure_login_logger,secure_signin_weblogin_move_directory.sh,synocgi-plugin-weblogin,user-preference-check-permission.sh,user-revoke-password-pending.sh]; Args=[USER=willadmin,TYPE=passwd,IS_KNOWN_DEVICE=yes]
+Sep 22 11:22:24 ZWNAS synoplugind[4973]: plugin_action.cpp:355 [4953][PRE][weblogin][user-revoke-password-pending.sh] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4973]: plugin_action.cpp:355 [4953][PRE][weblogin][user-revoke-password-pending.sh] Runtime: 0.003s
+Sep 22 11:22:24 ZWNAS synoplugind[4971]: plugin_action.cpp:355 [4953][PRE][weblogin][synocgi-plugin-weblogin] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4971]: plugin_action.cpp:355 [4953][PRE][weblogin][synocgi-plugin-weblogin] Runtime: 0.014s
+Sep 22 11:22:24 ZWNAS synoplugind[4972]: plugin_action.cpp:355 [4953][PRE][weblogin][user-preference-check-permission.sh] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4972]: plugin_action.cpp:355 [4953][PRE][weblogin][user-preference-check-permission.sh] Runtime: 0.013s
+Sep 22 11:22:24 ZWNAS synoplugind[4969]: plugin_action.cpp:355 [4953][PRE][weblogin][secure_login_logger] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4969]: plugin_action.cpp:355 [4953][PRE][weblogin][secure_login_logger] Runtime: 0.020s
+Sep 22 11:22:24 ZWNAS synoplugind[4970]: plugin_action.cpp:355 [4953][PRE][weblogin][secure_signin_weblogin_move_directory.sh] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4970]: plugin_action.cpp:355 [4953][PRE][weblogin][secure_signin_weblogin_move_directory.sh] Runtime: 0.028s
+Sep 22 11:22:24 ZWNAS synoscgi_SYNO.API.Auth_7_login[4953]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogin][MAIN] Runtime: 0.065s
+Sep 22 11:22:24 ZWNAS synoscgi_SYNO.API.Auth_7_login[4953]: pam_syno_ipblocklist(webui:auth): DB Error: Failed to connect database: FATAL:  database "autoupdate" does not exist
+Sep 22 11:22:24 ZWNAS synoscgi_SYNO.API.Auth_7_login[4953]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogin][MAIN] Plugin Action Start
+Sep 22 11:22:24 ZWNAS synoplugind[4984]: plugin_init.cpp:48 Plugin Init [4953][POST][weblogin][weblogin]
+Sep 22 11:22:24 ZWNAS synoplugind[4984]: plugin_action.cpp:355 [4953][POST][weblogin][MAIN] Scripts=[secure_login_logger,secure_signin_weblogin_move_directory.sh,synocgi-plugin-weblogin,user-preference-check-permission.sh,user-revoke-password-pending.sh]; Args=[USER=willadmin,TYPE=passwd,SESSION=webui,API_VERSION=7,IS_KNOWN_DEVICE=yes,IP=111.202.166.30,AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0,STATUS=success,RESULT=1,DOMAIN=zwnas.notedream.com,PORT=5000,IS_HTTPS=no]
+Sep 22 11:22:24 ZWNAS synoplugind[4996]: plugin_action.cpp:355 [4953][POST][weblogin][secure_signin_weblogin_move_directory.sh] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4996]: plugin_action.cpp:355 [4953][POST][weblogin][secure_signin_weblogin_move_directory.sh] Runtime: 0.002s
+Sep 22 11:22:24 ZWNAS synoplugind[4998]: plugin_action.cpp:355 [4953][POST][weblogin][user-preference-check-permission.sh] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4998]: plugin_action.cpp:355 [4953][POST][weblogin][user-preference-check-permission.sh] Runtime: 0.003s
+Sep 22 11:22:24 ZWNAS synoplugind[4999]: plugin_action.cpp:355 [4953][POST][weblogin][user-revoke-password-pending.sh] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4999]: plugin_action.cpp:355 [4953][POST][weblogin][user-revoke-password-pending.sh] Runtime: 0.009s
+Sep 22 11:22:24 ZWNAS synoplugind[4997]: plugin_action.cpp:355 [4953][POST][weblogin][synocgi-plugin-weblogin] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4997]: plugin_action.cpp:355 [4953][POST][weblogin][synocgi-plugin-weblogin] Runtime: 0.014s
+Sep 22 11:22:24 ZWNAS synoplugind[4995]: plugin_action.cpp:355 [4953][POST][weblogin][secure_login_logger] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4995]: plugin_action.cpp:355 [4953][POST][weblogin][secure_login_logger] Runtime: 0.020s
+Sep 22 11:22:24 ZWNAS synoscgi_SYNO.API.Auth_7_login[4953]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogin][MAIN] Runtime: 0.057s
+Sep 22 11:22:25 ZWNAS synoscgi_SYNO.Core.Desktop.Initdata_1_get_user_service[4902]: [HA-ERROR] conf.cc:117: Failed to get key host0: [0x0900 file_get_key_value.c:28]
+Sep 22 11:22:25 ZWNAS synoscgi_SYNO.Core.Desktop.Initdata_1_get_user_service[4902]: [HA-ERROR] conf.cc:1516: Failed to get conf host0
+Sep 22 11:22:25 ZWNAS synoscgi_SYNO.Core.QuickStart.Info_3_load_ds_info[5016]: APIInternalUtil.cpp:221 WebAPI SYNO.Core.DataCollect is not valid
+Sep 22 11:22:25 ZWNAS synoscgi_SYNO.Core.QuickStart.Info_3_load_ds_info[5016]: APIInternalUtil.cpp:221 WebAPI SYNO.Core.DataCollect is not valid
+Sep 22 11:22:25 ZWNAS synoscgi_SYNO.Core.QuickStart.Info_3_load_ds_info_SYNO.Core.DataCollect_1_get[5023]: APIInternalUtil.cpp:221 WebAPI SYNO.Core.DataCollect is not valid
+Sep 22 11:22:27 ZWNAS synocgid[17439]: session/session.cpp:409 IP is not the same. 111.202.166.30, 111.202.166.250, SYNO.Core.FileServ.AFP, webui, 0
+Sep 22 11:22:27 ZWNAS synoscgi_SYNO.API.Auth_7_logout[5472]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogout][MAIN] Plugin Action Start
+Sep 22 11:22:27 ZWNAS synoplugind[5474]: plugin_init.cpp:48 Plugin Init [5472][PRE][weblogin][weblogout]
+Sep 22 11:22:27 ZWNAS synoscgi_SYNO.API.Auth_7_logout[5472]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogout][MAIN] Runtime: 0.001s
+Sep 22 11:22:27 ZWNAS synoscgi_SYNO.API.Auth_7_logout[5472]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogout][MAIN] Plugin Action Start
+Sep 22 11:22:27 ZWNAS synoplugind[5475]: plugin_init.cpp:48 Plugin Init [5472][POST][weblogin][weblogout]
+Sep 22 11:22:27 ZWNAS synoscgi_SYNO.API.Auth_7_logout[5472]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogout][MAIN] Runtime: 0.001s
+Sep 22 11:27:22 ZWNAS sshd[11398]: pam_unix(sshd:session): session opened for user willadmin by (uid=0)
+Sep 22 11:27:26 ZWNAS sshd[11434]: pam_unix(sshd:session): session opened for user willadmin by (uid=0)
+Sep 22 11:27:42 ZWNAS sudo[11548]: pam_unix(sudo:session): session opened for user root by willadmin(uid=1026)
+Sep 22 11:27:45 ZWNAS -ash[11573]: HISTORY: PID=11573 UID=0 journalctl --since "1 hour ago" | grep -Ei "restart|stopped|started|synology|nginx|login|session"
+Sep 22 11:27:55 ZWNAS -ash[11573]: HISTORY: PID=11573 UID=0 ps aux | grep -E "nginx|synoscgi|synow3tool" | grep -v grep
+Sep 22 11:28:33 ZWNAS -ash[11573]: HISTORY: PID=11573 UID=0 systemctl status nginx --no-pager
+Sep 22 11:28:39 ZWNAS -ash[11573]: HISTORY: PID=11573 UID=0 journalctl --since "2 hours ago" | grep -Ei "nginx|session|login|synoscgi|webman|restart|stop|start"
+root@ZWNAS:~# journalctl --since "11:15:00" --until "11:25:00"
+-- Logs begin at Tue 2026-09-22 10:48:18 CST, end at Tue 2026-09-22 11:28:46 CST. --
+Sep 22 11:15:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:02 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:02 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:02 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:18 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:18 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:18 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:20 ZWNAS [27162]: disk/disk_is_mv_soc_driver.c:71 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_h
+ost/host*/proc_name
+Sep 22 11:15:20 ZWNAS [27162]: disk/disk_is_mv1475_driver.c:66 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_h
+ost/host*/proc_name
+Sep 22 11:15:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:22 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:22 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:22 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:26 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:26 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:26 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:30 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:30 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:30 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:34 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:34 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:34 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:38 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:38 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:38 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:42 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:42 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:42 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:46 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:46 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:46 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:54 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:54 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:54 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:58 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:58 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:15:58 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:02 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:02 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:02 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:18 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:18 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:18 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:20 ZWNAS [28333]: disk/disk_is_mv_soc_driver.c:71 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_h
+ost/host*/proc_name
+Sep 22 11:16:20 ZWNAS [28333]: disk/disk_is_mv1475_driver.c:66 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_h
+ost/host*/proc_name
+Sep 22 11:16:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:22 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:22 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:22 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:26 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:26 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:26 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:30 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:30 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:30 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:34 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:34 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:34 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:38 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:38 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:38 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:42 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:42 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:42 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:46 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:46 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:46 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:54 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:54 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:54 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:58 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:58 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:16:58 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:00 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:02 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:02 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:02 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:18 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:20 ZWNAS [29488]: disk/disk_is_mv_soc_driver.c:71 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_h
+ost/host*/proc_name
+Sep 22 11:17:20 ZWNAS [29488]: disk/disk_is_mv1475_driver.c:66 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_h
+ost/host*/proc_name
+Sep 22 11:17:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:17:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:20 ZWNAS [30640]: disk/disk_is_mv_soc_driver.c:71 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_h
+ost/host*/proc_name
+Sep 22 11:18:20 ZWNAS [30640]: disk/disk_is_mv1475_driver.c:66 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_h
+ost/host*/proc_name
+Sep 22 11:18:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:18:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:20 ZWNAS [31795]: disk/disk_is_mv_soc_driver.c:71 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_h
+ost/host*/proc_name
+Sep 22 11:19:20 ZWNAS [31795]: disk/disk_is_mv1475_driver.c:66 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_h
+ost/host*/proc_name
+Sep 22 11:19:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:49 ZWNAS scemd[18985]: disk/disk_is_mv_soc_driver.c:71 Can't get sata chip name from pattern /sys/block/sata3/device/../../s
+csi_host/host*/proc_name
+Sep 22 11:19:49 ZWNAS scemd[18985]: disk/disk_is_mv1475_driver.c:66 Can't get sata chip name from pattern /sys/block/sata3/device/../../s
+csi_host/host*/proc_name
+Sep 22 11:19:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:58 ZWNAS synoscgi_SYNO.API.Auth_7_login[32027]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogin][MAIN] Plugin Action Start
+Sep 22 11:19:58 ZWNAS synoplugind[32031]: daemon.cpp:83 Credentials from SO_PEERCRED: pid=32027, euid=0, egid=0
+Sep 22 11:19:58 ZWNAS synoplugind[32031]: plugin_init.cpp:48 Plugin Init [32027][PRE][weblogin][weblogin]
+Sep 22 11:19:59 ZWNAS synoplugind[32031]: plugin_action.cpp:355 [32027][PRE][weblogin][MAIN] Scripts=[secure_login_logger,secure_signin_weblogi
+n_move_directory.sh,synocgi-plugin-weblogin,user-preference-check-permission.sh,user-revoke-password-pending.sh]; Args=[USER=willadmin,TYPE=pas
+swd,IS_KNOWN_DEVICE=yes]
+Sep 22 11:19:59 ZWNAS synoplugind[32046]: plugin_action.cpp:355 [32027][PRE][weblogin][user-revoke-password-pending.sh] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32046]: plugin_action.cpp:355 [32027][PRE][weblogin][user-revoke-password-pending.sh] Runtime: 0.002s
+Sep 22 11:19:59 ZWNAS synoplugind[32045]: plugin_action.cpp:355 [32027][PRE][weblogin][user-preference-check-permission.sh] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32045]: plugin_action.cpp:355 [32027][PRE][weblogin][user-preference-check-permission.sh] Runtime: 0.006s
+Sep 22 11:19:59 ZWNAS synoplugind[32044]: plugin_action.cpp:355 [32027][PRE][weblogin][synocgi-plugin-weblogin] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32044]: plugin_action.cpp:355 [32027][PRE][weblogin][synocgi-plugin-weblogin] Runtime: 0.015s
+Sep 22 11:19:59 ZWNAS synoplugind[32042]: plugin_action.cpp:355 [32027][PRE][weblogin][secure_login_logger] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32042]: plugin_action.cpp:355 [32027][PRE][weblogin][secure_login_logger] Runtime: 0.020s
+Sep 22 11:19:59 ZWNAS synoplugind[32043]: plugin_action.cpp:355 [32027][PRE][weblogin][secure_signin_weblogin_move_directory.sh] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32043]: plugin_action.cpp:355 [32027][PRE][weblogin][secure_signin_weblogin_move_directory.sh] Runtime: 0.029
+s
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.API.Auth_7_login[32027]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogin][MAIN] Runtime: 0.066s
+Sep 22 11:19:59 ZWNAS postgres[32054]: [5-1] 2026-09-22 03:19:59.044 GMT [32054] FATAL:  database "autoupdate" does not exist
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.API.Auth_7_login[32027]: pam_syno_ipblocklist(webui:auth): DB Error: Failed to connect database: FATA
+L:  database "autoupdate" does not exist
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.API.Auth_7_login[32027]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogin][MAIN] Plugin Action Star
+t
+Sep 22 11:19:59 ZWNAS synoplugind[32057]: daemon.cpp:83 Credentials from SO_PEERCRED: pid=32027, euid=0, egid=0
+Sep 22 11:19:59 ZWNAS synoplugind[32057]: plugin_init.cpp:48 Plugin Init [32027][POST][weblogin][weblogin]
+Sep 22 11:19:59 ZWNAS synoplugind[32057]: plugin_action.cpp:355 [32027][POST][weblogin][MAIN] Scripts=[secure_login_logger,secure_signin_weblog
+in_move_directory.sh,synocgi-plugin-weblogin,user-preference-check-permission.sh,user-revoke-password-pending.sh]; Args=[USER=willadmin,TYPE=pa
+sswd,SESSION=webui,API_VERSION=7,IS_KNOWN_DEVICE=yes,IP=111.202.166.30,AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
+L, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0,STATUS=success,RESULT=1,DOMAIN=zwnas.notedream.com,PORT=5000,IS_HTTPS=no]
+Sep 22 11:19:59 ZWNAS synoplugind[32069]: plugin_action.cpp:355 [32027][POST][weblogin][secure_signin_weblogin_move_directory.sh] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32069]: plugin_action.cpp:355 [32027][POST][weblogin][secure_signin_weblogin_move_directory.sh] Runtime: 0.00
+2s
+Sep 22 11:19:59 ZWNAS synoplugind[32071]: plugin_action.cpp:355 [32027][POST][weblogin][user-preference-check-permission.sh] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32071]: plugin_action.cpp:355 [32027][POST][weblogin][user-preference-check-permission.sh] Runtime: 0.002s
+Sep 22 11:19:59 ZWNAS synoplugind[32072]: plugin_action.cpp:355 [32027][POST][weblogin][user-revoke-password-pending.sh] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32072]: plugin_action.cpp:355 [32027][POST][weblogin][user-revoke-password-pending.sh] Runtime: 0.010s
+Sep 22 11:19:59 ZWNAS synoplugind[32070]: plugin_action.cpp:355 [32027][POST][weblogin][synocgi-plugin-weblogin] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32070]: plugin_action.cpp:355 [32027][POST][weblogin][synocgi-plugin-weblogin] Runtime: 0.014s
+Sep 22 11:19:59 ZWNAS synoplugind[32068]: plugin_action.cpp:355 [32027][POST][weblogin][secure_login_logger] ExitCode: 0
+Sep 22 11:19:59 ZWNAS synoplugind[32068]: plugin_action.cpp:355 [32027][POST][weblogin][secure_login_logger] Runtime: 0.021s
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.API.Auth_7_login[32027]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogin][MAIN] Runtime: 0.060s
+Sep 22 11:19:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.Core.Desktop.Initdata_1_get_user_service[32023]: [HA-ERROR] conf.cc:117: Failed to get key host0: [0x
+0900 file_get_key_value.c:28]
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.Core.Desktop.Initdata_1_get_user_service[32023]: [HA-ERROR] conf.cc:1516: Failed to get conf host0
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.Core.QuickStart.Info_3_load_ds_info[32092]: APIInternalUtil.cpp:221 WebAPI SYNO.Core.DataCollect is n
+ot valid
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.Core.QuickStart.Info_3_load_ds_info[32092]: APIInternalUtil.cpp:221 WebAPI SYNO.Core.DataCollect is n
+ot valid
+Sep 22 11:19:59 ZWNAS synoscgi_SYNO.Core.QuickStart.Info_3_load_ds_info_SYNO.Core.DataCollect_1_get[32096]: APIInternalUtil.cpp:221 WebAP
+I SYNO.Core.DataCollect is not valid
+Sep 22 11:20:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:02 ZWNAS rm[729]: uid: 0, euid: 0, arguments:["-rf" "/var/tmp/security_json_tmp.PMDGGB"]
+Sep 22 11:20:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:03 ZWNAS rm[757]: uid: 0, euid: 0, arguments:["-rf" "/var/tmp/security_json_tmp.kY9NN0"]
+Sep 22 11:20:04 ZWNAS rm[760]: uid: 0, euid: 0, arguments:["-rf" "/var/tmp/security_json_tmp.Y1wde2"]
+Sep 22 11:20:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:05 ZWNAS rm[780]: uid: 0, euid: 0, arguments:["-rf" "/var/tmp/security_json_tmp.dAOyLV"]
+Sep 22 11:20:05 ZWNAS synoscgi_SYNO.Core.Upgrade.Server_1_check[32094]: plugin_action.c:76 synoplugin: [POST][update][update/check_result_refre
+shed][MAIN] Plugin Action Start
+Sep 22 11:20:05 ZWNAS synoplugind[781]: daemon.cpp:83 Credentials from SO_PEERCRED: pid=32094, euid=0, egid=0
+Sep 22 11:20:05 ZWNAS synoplugind[781]: plugin_init.cpp:48 Plugin Init [32094][POST][update][update/check_result_refreshed]
+Sep 22 11:20:05 ZWNAS synoplugind[781]: plugin_action.cpp:355 [32094][POST][update/check_result_refreshed][MAIN] Scripts=[dsm_update_cache_chan
+ge.sh]; Args=[PROMOTION_NANO=0,PROMOTION_AVAILABLE=no,PROMOTION_BASE=0,UPDATE_NANO=0,UPDATE_BASE=90080,UPDATE_AVAILABLE=yes]
+Sep 22 11:20:05 ZWNAS synoplugind[785]: plugin_action.cpp:355 [32094][POST][update/check_result_refreshed][dsm_update_cache_change.sh] ExitCode
+: 0
+Sep 22 11:20:05 ZWNAS synoplugind[785]: plugin_action.cpp:355 [32094][POST][update/check_result_refreshed][dsm_update_cache_change.sh] Runtime:
+ 0.037s
+Sep 22 11:20:05 ZWNAS synoscgi_SYNO.Core.Upgrade.Server_1_check[32094]: plugin_action.c:76 synoplugin: [POST][update][update/check_result_refre
+shed][MAIN] Runtime: 0.041s
+Sep 22 11:20:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:12 ZWNAS synoscgi_SYNO.Core.Package.Server_1_check[32094]: SYNOPKGMGR: Failed to do json parsing, errmsg=[* Line 1, Column 1
+
+                                                                          Syntax error: value, object or array expected.
+                                                                        ] src=[<!DOCTYPE html>
+                                                                        <html class="img-no-display"><head>
+                                                                        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8
+" /]
+Sep 22 11:20:12 ZWNAS synoscgi_SYNO.Core.Package.Server_1_check[32094]: SYNOPKGMGR: http://spk.bobohome.store:8880?package_update_channel
+=beta&unique=synology_epyc7002_sa6400&build=86009&major=7&language=enu&micro=2&arch=epyc7002&minor=3&timezone=Beijing&group_id=3&nano=1, Failed
+ to request packages, httpResponseCode=400
+Sep 22 11:20:12 ZWNAS synoscgi_SYNO.Core.Package.Server_1_check[32094]: SYNOPKGMGR: http://spk.bobohome.store:8880, Failed to request pac
+kages, httpResponseCode=400
+Sep 22 11:20:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:20 ZWNAS [1125]: disk/disk_is_mv_soc_driver.c:71 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_ho
+st/host*/proc_name
+Sep 22 11:20:20 ZWNAS [1125]: disk/disk_is_mv1475_driver.c:66 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_ho
+st/host*/proc_name
+Sep 22 11:20:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:20:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:00 ZWNAS synoscgi_SYNO.Core.Package.Server_2_list[1401]: SYNOPKGMGR: Failed to do json parsing, errmsg=[* Line 1, Column 1
+
+                                                                        Syntax error: value, object or array expected.
+                                                                      ] src=[<!DOCTYPE html>
+                                                                      <html class="img-no-display"><head>
+                                                                      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+/]
+Sep 22 11:21:00 ZWNAS synoscgi_SYNO.Core.Package.Server_2_list[1401]: SYNOPKGMGR: http://spk.bobohome.store:8880?package_update_channel=b
+eta&unique=synology_epyc7002_sa6400&build=86009&major=7&language=chs&micro=2&arch=epyc7002&minor=3&timezone=Beijing&group_id=3&nano=1, Failed t
+o request packages, httpResponseCode=400
+Sep 22 11:21:00 ZWNAS synoscgi_SYNO.Core.Package.Server_2_list[1401]: SYNOPKGMGR: http://spk.bobohome.store:8880, Failed to request packa
+ges, httpResponseCode=400
+Sep 22 11:21:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:20 ZWNAS [2817]: disk/disk_is_mv_soc_driver.c:71 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_ho
+st/host*/proc_name
+Sep 22 11:21:20 ZWNAS [2817]: disk/disk_is_mv1475_driver.c:66 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_ho
+st/host*/proc_name
+Sep 22 11:21:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:21:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:18 ZWNAS synocgid[17439]: session/session.cpp:409 IP is not the same. 111.202.166.30, 111.202.166.250, SYNO.Core.UserSetting
+s, webui, 0
+Sep 22 11:22:19 ZWNAS synoscgi_SYNO.API.Auth_7_logout[4856]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogout][MAIN] Plugin Action Star
+t
+Sep 22 11:22:19 ZWNAS synoplugind[4881]: daemon.cpp:83 Credentials from SO_PEERCRED: pid=4856, euid=0, egid=0
+Sep 22 11:22:19 ZWNAS synoplugind[4881]: plugin_init.cpp:48 Plugin Init [4856][PRE][weblogin][weblogout]
+Sep 22 11:22:19 ZWNAS synoplugind[4881]: plugin_action.cpp:355 [4856][PRE][weblogout][MAIN] Scripts=[]; Args=[USER=]
+Sep 22 11:22:19 ZWNAS synoscgi_SYNO.API.Auth_7_logout[4856]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogout][MAIN] Runtime: 0.001s
+Sep 22 11:22:19 ZWNAS synoscgi_SYNO.API.Auth_7_logout[4856]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogout][MAIN] Plugin Action Sta
+rt
+Sep 22 11:22:19 ZWNAS synoplugind[4884]: daemon.cpp:83 Credentials from SO_PEERCRED: pid=4856, euid=0, egid=0
+Sep 22 11:22:19 ZWNAS synoplugind[4884]: plugin_init.cpp:48 Plugin Init [4856][POST][weblogin][weblogout]
+Sep 22 11:22:19 ZWNAS synoplugind[4884]: plugin_action.cpp:355 [4856][POST][weblogout][MAIN] Scripts=[]; Args=[USER=]
+Sep 22 11:22:19 ZWNAS synoscgi_SYNO.API.Auth_7_logout[4856]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogout][MAIN] Runtime: 0.001s
+Sep 22 11:22:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:20 ZWNAS [4913]: disk/disk_is_mv_soc_driver.c:71 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_ho
+st/host*/proc_name
+Sep 22 11:22:20 ZWNAS [4913]: disk/disk_is_mv1475_driver.c:66 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_ho
+st/host*/proc_name
+Sep 22 11:22:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:24 ZWNAS synoscgi_SYNO.API.Auth_7_login[4953]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogin][MAIN] Plugin Action Start
+Sep 22 11:22:24 ZWNAS synoplugind[4958]: daemon.cpp:83 Credentials from SO_PEERCRED: pid=4953, euid=0, egid=0
+Sep 22 11:22:24 ZWNAS synoplugind[4958]: plugin_init.cpp:48 Plugin Init [4953][PRE][weblogin][weblogin]
+Sep 22 11:22:24 ZWNAS synoplugind[4958]: plugin_action.cpp:355 [4953][PRE][weblogin][MAIN] Scripts=[secure_login_logger,secure_signin_weblogin_
+move_directory.sh,synocgi-plugin-weblogin,user-preference-check-permission.sh,user-revoke-password-pending.sh]; Args=[USER=willadmin,TYPE=passw
+d,IS_KNOWN_DEVICE=yes]
+Sep 22 11:22:24 ZWNAS synoplugind[4973]: plugin_action.cpp:355 [4953][PRE][weblogin][user-revoke-password-pending.sh] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4973]: plugin_action.cpp:355 [4953][PRE][weblogin][user-revoke-password-pending.sh] Runtime: 0.003s
+Sep 22 11:22:24 ZWNAS synoplugind[4971]: plugin_action.cpp:355 [4953][PRE][weblogin][synocgi-plugin-weblogin] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4971]: plugin_action.cpp:355 [4953][PRE][weblogin][synocgi-plugin-weblogin] Runtime: 0.014s
+Sep 22 11:22:24 ZWNAS synoplugind[4972]: plugin_action.cpp:355 [4953][PRE][weblogin][user-preference-check-permission.sh] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4972]: plugin_action.cpp:355 [4953][PRE][weblogin][user-preference-check-permission.sh] Runtime: 0.013s
+Sep 22 11:22:24 ZWNAS synoplugind[4969]: plugin_action.cpp:355 [4953][PRE][weblogin][secure_login_logger] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4969]: plugin_action.cpp:355 [4953][PRE][weblogin][secure_login_logger] Runtime: 0.020s
+Sep 22 11:22:24 ZWNAS synoplugind[4970]: plugin_action.cpp:355 [4953][PRE][weblogin][secure_signin_weblogin_move_directory.sh] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4970]: plugin_action.cpp:355 [4953][PRE][weblogin][secure_signin_weblogin_move_directory.sh] Runtime: 0.028s
+Sep 22 11:22:24 ZWNAS synoscgi_SYNO.API.Auth_7_login[4953]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogin][MAIN] Runtime: 0.065s
+Sep 22 11:22:24 ZWNAS postgres[4981]: [5-1] 2026-09-22 03:22:24.854 GMT [4981] FATAL:  database "autoupdate" does not exist
+Sep 22 11:22:24 ZWNAS synoscgi_SYNO.API.Auth_7_login[4953]: pam_syno_ipblocklist(webui:auth): DB Error: Failed to connect database: FATAL
+:  database "autoupdate" does not exist
+Sep 22 11:22:24 ZWNAS synoscgi_SYNO.API.Auth_7_login[4953]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogin][MAIN] Plugin Action Start
+Sep 22 11:22:24 ZWNAS synoplugind[4984]: daemon.cpp:83 Credentials from SO_PEERCRED: pid=4953, euid=0, egid=0
+Sep 22 11:22:24 ZWNAS synoplugind[4984]: plugin_init.cpp:48 Plugin Init [4953][POST][weblogin][weblogin]
+Sep 22 11:22:24 ZWNAS synoplugind[4984]: plugin_action.cpp:355 [4953][POST][weblogin][MAIN] Scripts=[secure_login_logger,secure_signin_weblogin
+_move_directory.sh,synocgi-plugin-weblogin,user-preference-check-permission.sh,user-revoke-password-pending.sh]; Args=[USER=willadmin,TYPE=pass
+wd,SESSION=webui,API_VERSION=7,IS_KNOWN_DEVICE=yes,IP=111.202.166.30,AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
+ like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0,STATUS=success,RESULT=1,DOMAIN=zwnas.notedream.com,PORT=5000,IS_HTTPS=no]
+Sep 22 11:22:24 ZWNAS synoplugind[4996]: plugin_action.cpp:355 [4953][POST][weblogin][secure_signin_weblogin_move_directory.sh] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4996]: plugin_action.cpp:355 [4953][POST][weblogin][secure_signin_weblogin_move_directory.sh] Runtime: 0.002s
+Sep 22 11:22:24 ZWNAS synoplugind[4998]: plugin_action.cpp:355 [4953][POST][weblogin][user-preference-check-permission.sh] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4998]: plugin_action.cpp:355 [4953][POST][weblogin][user-preference-check-permission.sh] Runtime: 0.003s
+Sep 22 11:22:24 ZWNAS synoplugind[4999]: plugin_action.cpp:355 [4953][POST][weblogin][user-revoke-password-pending.sh] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4999]: plugin_action.cpp:355 [4953][POST][weblogin][user-revoke-password-pending.sh] Runtime: 0.009s
+Sep 22 11:22:24 ZWNAS synoplugind[4997]: plugin_action.cpp:355 [4953][POST][weblogin][synocgi-plugin-weblogin] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4997]: plugin_action.cpp:355 [4953][POST][weblogin][synocgi-plugin-weblogin] Runtime: 0.014s
+Sep 22 11:22:24 ZWNAS synoplugind[4995]: plugin_action.cpp:355 [4953][POST][weblogin][secure_login_logger] ExitCode: 0
+Sep 22 11:22:24 ZWNAS synoplugind[4995]: plugin_action.cpp:355 [4953][POST][weblogin][secure_login_logger] Runtime: 0.020s
+Sep 22 11:22:24 ZWNAS synoscgi_SYNO.API.Auth_7_login[4953]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogin][MAIN] Runtime: 0.057s
+Sep 22 11:22:25 ZWNAS synoscgi_SYNO.Core.Desktop.Initdata_1_get_user_service[4902]: [HA-ERROR] conf.cc:117: Failed to get key host0: [0x0
+900 file_get_key_value.c:28]
+Sep 22 11:22:25 ZWNAS synoscgi_SYNO.Core.Desktop.Initdata_1_get_user_service[4902]: [HA-ERROR] conf.cc:1516: Failed to get conf host0
+Sep 22 11:22:25 ZWNAS synoscgi_SYNO.Core.QuickStart.Info_3_load_ds_info[5016]: APIInternalUtil.cpp:221 WebAPI SYNO.Core.DataCollect is no
+t valid-
+Sep 22 11:22:25 ZWNAS synoscgi_SYNO.Core.QuickStart.Info_3_load_ds_info[5016]: APIInternalUtil.cpp:221 WebAPI SYNO.Core.DataCollect is no
+t valid
+Sep 22 11:22:25 ZWNAS synoscgi_SYNO.Core.QuickStart.Info_3_load_ds_info_SYNO.Core.DataCollect_1_get[5023]: APIInternalUtil.cpp:221 WebAPI
+ SYNO.Core.DataCollect is not valid
+Sep 22 11:22:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:27 ZWNAS synocgid[17439]: session/session.cpp:409 IP is not the same. 111.202.166.30, 111.202.166.250, SYNO.Core.FileServ.AF
+P, webui, 0
+Sep 22 11:22:27 ZWNAS synoscgi_SYNO.API.Auth_7_logout[5472]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogout][MAIN] Plugin Action Star
+t
+Sep 22 11:22:27 ZWNAS synoplugind[5474]: daemon.cpp:83 Credentials from SO_PEERCRED: pid=5472, euid=0, egid=0
+Sep 22 11:22:27 ZWNAS synoplugind[5474]: plugin_init.cpp:48 Plugin Init [5472][PRE][weblogin][weblogout]
+Sep 22 11:22:27 ZWNAS synoplugind[5474]: plugin_action.cpp:355 [5472][PRE][weblogout][MAIN] Scripts=[]; Args=[USER=]
+Sep 22 11:22:27 ZWNAS synoscgi_SYNO.API.Auth_7_logout[5472]: plugin_action.c:76 synoplugin: [PRE][weblogin][weblogout][MAIN] Runtime: 0.001s
+Sep 22 11:22:27 ZWNAS synoscgi_SYNO.API.Auth_7_logout[5472]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogout][MAIN] Plugin Action Sta
+rt
+Sep 22 11:22:27 ZWNAS synoplugind[5475]: daemon.cpp:83 Credentials from SO_PEERCRED: pid=5472, euid=0, egid=0
+Sep 22 11:22:27 ZWNAS synoplugind[5475]: plugin_init.cpp:48 Plugin Init [5472][POST][weblogin][weblogout]
+Sep 22 11:22:27 ZWNAS synoplugind[5475]: plugin_action.cpp:355 [5472][POST][weblogout][MAIN] Scripts=[]; Args=[USER=]
+Sep 22 11:22:27 ZWNAS synoscgi_SYNO.API.Auth_7_logout[5472]: plugin_action.c:76 synoplugin: [POST][weblogin][weblogout][MAIN] Runtime: 0.001s
+Sep 22 11:22:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:22:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:03 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:05 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:07 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:09 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:11 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:13 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:15 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:17 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:19 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:20 ZWNAS [6580]: disk/disk_is_mv_soc_driver.c:71 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_ho
+st/host*/proc_name
+Sep 22 11:23:20 ZWNAS [6580]: disk/disk_is_mv1475_driver.c:66 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_ho
+st/host*/proc_name
+Sep 22 11:23:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:21 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:23 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:25 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:27 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:29 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:31 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:33 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:35 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:37 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:39 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:41 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:43 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:45 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:47 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:49 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:51 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:53 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:55 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:57 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:23:59 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:01 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:04 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:06 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:08 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:10 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:12 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:14 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:16 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:18 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:18 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:18 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:18 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:18 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:18 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:20 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:20 ZWNAS [16343]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:20 ZWNAS [7731]: disk/disk_is_mv_soc_driver.c:71 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_ho
+st/host*/proc_name
+Sep 22 11:24:20 ZWNAS [7731]: disk/disk_is_mv1475_driver.c:66 Can't get sata chip name from pattern /sys/block/sata3/device/../../scsi_ho
+st/host*/proc_name
+Sep 22 11:24:22 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:22 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:22 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:22 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:22 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:22 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:24 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:26 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:26 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:26 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:26 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:26 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:26 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:28 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:30 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:30 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:30 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:30 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:30 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:30 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:32 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:34 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:34 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:34 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:34 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:34 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:34 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:36 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:38 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:38 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:38 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:38 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:38 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:38 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:40 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:42 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:42 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:42 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:42 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:42 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:42 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:44 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:46 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:46 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:46 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:46 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:46 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:46 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:48 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:50 ZWNAS scemd[18985]: disk/disk_is_mv_soc_driver.c:71 Can't get sata chip name from pattern /sys/block/sata3/device/../../s
+csi_host/host*/proc_name
+Sep 22 11:24:50 ZWNAS scemd[18985]: disk/disk_is_mv1475_driver.c:66 Can't get sata chip name from pattern /sys/block/sata3/device/../../s
+csi_host/host*/proc_name
+Sep 22 11:24:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:50 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:52 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:54 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:54 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:54 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:54 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:54 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:54 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:56 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:58 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:58 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:58 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:58 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:58 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
+Sep 22 11:24:58 ZWNAS scemd[18985]: sata_dev_port_check.c:16 Failed to get slot informtion of sata2
